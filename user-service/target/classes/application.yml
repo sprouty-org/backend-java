@@ -1,0 +1,16 @@
+server:
+  port: 8081   # user-service port, matches gateway routing
+
+spring:
+  application:
+    name: user-service
+
+jwt:
+  # Read secret from environment variable; fail if not set
+  secret: ${JWT_SECRET:?JWT secret is missing}
+
+# Optional logging
+logging:
+  level:
+    root: INFO
+    com.google.firebase: WARN

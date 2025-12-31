@@ -1,0 +1,54 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway-service
+
+  cloud:
+    gateway:
+      httpclient:
+        connect-timeout: 10000
+        response-timeout: 30s
+
+      default-filters:
+
+      routes:
+        - id: user-service
+          uri: http://user-service:8081
+          predicates:
+            - Path=/users/**
+
+        - id: plant-service
+          uri: http://plant-service:8082
+          predicates:
+            - Path=/plants/**
+
+        - id: sensor-service
+          uri: http://sensor-service:8083
+          predicates:
+            - Path=/sensors/**
+
+        - id: notification-service
+          uri: http://notification-service:8084
+          predicates:
+            - Path=/notifications/**
+
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+
+      grpc:
+        enabled: false
+
+jwt:
+  secret: ${JWT_SECRET:?JWT secret must be provided}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

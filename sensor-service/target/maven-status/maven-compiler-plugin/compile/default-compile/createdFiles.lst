@@ -1,0 +1,7 @@
+si\uni\fri\sprouty\model\MasterPlant.class
+si\uni\fri\sprouty\SensorServiceApplication.class
+si\uni\fri\sprouty\model\NotificationRequest.class
+si\uni\fri\sprouty\controller\SensorController.class
+si\uni\fri\sprouty\config\FirebaseConfig.class
+si\uni\fri\sprouty\model\UserPlant.class
+si\uni\fri\sprouty\service\SensorService.class

@@ -1,0 +1,6 @@
+server:
+  port: 8084   # user-service port, matches gateway routing
+
+spring:
+  application:
+    name: notification-service
