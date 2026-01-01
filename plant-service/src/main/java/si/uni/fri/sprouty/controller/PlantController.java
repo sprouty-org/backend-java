@@ -8,8 +8,8 @@ import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
-import si.uni.fri.sprouty.model.MasterPlant;
-import si.uni.fri.sprouty.model.UserPlant;
+import si.uni.fri.sprouty.dto.MasterPlant;
+import si.uni.fri.sprouty.dto.UserPlant;
 import si.uni.fri.sprouty.service.PlantService;
 
 import java.util.List;

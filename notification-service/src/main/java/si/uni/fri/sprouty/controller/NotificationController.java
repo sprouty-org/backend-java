@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import si.uni.fri.sprouty.model.NotificationRequest;
+import si.uni.fri.sprouty.dto.NotificationRequest;
 import si.uni.fri.sprouty.service.FcmService;
 
 @RestController

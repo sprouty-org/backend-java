@@ -8,9 +8,9 @@ import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Blob;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import si.uni.fri.sprouty.model.MasterPlant;
-import si.uni.fri.sprouty.model.NotificationRequest;
-import si.uni.fri.sprouty.model.UserPlant;
+import si.uni.fri.sprouty.dto.MasterPlant;
+import si.uni.fri.sprouty.dto.NotificationRequest;
+import si.uni.fri.sprouty.dto.UserPlant;
 
 import java.util.HashMap;
 import java.util.Map;

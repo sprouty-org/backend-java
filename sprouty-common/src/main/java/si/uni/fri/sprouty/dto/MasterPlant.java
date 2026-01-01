@@ -1,4 +1,4 @@
-package si.uni.fri.sprouty.model;
+package si.uni.fri.sprouty.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

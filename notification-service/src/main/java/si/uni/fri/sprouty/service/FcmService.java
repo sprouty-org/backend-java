@@ -6,7 +6,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import org.springframework.stereotype.Service;
-import si.uni.fri.sprouty.model.NotificationRequest;
+import si.uni.fri.sprouty.dto.NotificationRequest;
 
 @Service
 public class FcmService {

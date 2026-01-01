@@ -15,9 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import si.uni.fri.sprouty.model.MasterPlant;
+import si.uni.fri.sprouty.dto.MasterPlant;
 import com.google.cloud.firestore.*;
-import si.uni.fri.sprouty.model.UserPlant;
+import si.uni.fri.sprouty.dto.UserPlant;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -139,7 +139,7 @@ public class PlantService {
         return objectMapper.readValue(content, MasterPlant.class);
     }
 
-    private String uploadImageToStorage(byte[] imageBytes, String userId) throws Exception {
+    private String uploadImageToStorage(byte[] imageBytes, String userId) {
         Bucket bucket = StorageClient.getInstance().bucket();
         String fileName = String.format("users/%s/plants/%s.jpg", userId, UUID.randomUUID());
         Blob blob = bucket.create(fileName, imageBytes, "image/jpeg");

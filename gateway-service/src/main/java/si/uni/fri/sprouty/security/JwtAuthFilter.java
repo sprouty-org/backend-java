@@ -17,12 +17,12 @@ import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Objects;
 
 @Component
 public class JwtAuthFilter implements GlobalFilter, Ordered {
 
-    private List<String> publicEndpoints = List.of(
+    // Public endpoints that dont require authentication
+    private final List<String> publicEndpoints = List.of(
             "/users/login",
             "/users/register",
             "/sensors/data",
@@ -30,7 +30,7 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
     );
 
     @Value("${jwt.secret:}")
-    private String secretKey; // require a real secret via config; do not rely on a weak default
+    private String secretKey;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -54,20 +54,20 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
         String token = authHeader.substring(7);
         try {
             if (secretKey == null || secretKey.isBlank()) {
-                // fail fast if no secret configured
                 return unauthorized(exchange);
             }
 
             byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
             var signingKey = Keys.hmacShaKeyFor(keyBytes);
 
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(signingKey)
+            // UPDATED FOR JJWT 0.12.x / 0.13.0
+            Claims claims = Jwts.parser()
+                    .verifyWith(signingKey)
                     .build()
-                    .parseClaimsJws(token)
-                    .getBody();
+                    .parseSignedClaims(token)
+                    .getPayload();
 
-            // Optionally forward the subject as a header for downstream services
+            // Forward the subject as a header for downstream services
             String subject = claims.getSubject();
             if (subject != null && !subject.isBlank()) {
                 exchange = exchange.mutate()
@@ -90,6 +90,6 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE; // run early
+        return Ordered.HIGHEST_PRECEDENCE;
     }
 }

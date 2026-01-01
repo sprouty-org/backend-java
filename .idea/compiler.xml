@@ -8,10 +8,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="lifecycle-service" />
-        <module name="user-service" />
-        <module name="sensor-service" />
         <module name="gateway-service" />
         <module name="plant-service" />
+        <module name="sprouty-common" />
+        <module name="user-service" />
+        <module name="sensor-service" />
         <module name="notification-service" />
       </profile>
     </annotationProcessing>
