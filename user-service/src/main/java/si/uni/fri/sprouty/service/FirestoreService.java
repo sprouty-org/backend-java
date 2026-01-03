@@ -5,7 +5,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.stereotype.Service;
-import si.uni.fri.sprouty.model.User;
+import si.uni.fri.sprouty.dto.User;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,8 +25,6 @@ public class FirestoreService {
             System.out.println("Creating new user: " + user.getUid());
             docRef.set(user).get();
         } else {
-            // Even if user exists, registration might be used to recover account,
-            // so we update the token just in case.
             updateFcmToken(user.getUid(), user.getFcmToken());
         }
     }
@@ -46,5 +44,11 @@ public class FirestoreService {
         } catch (Exception e) {
             System.err.println("Error updating FCM token: " + e.getMessage());
         }
+    }
+
+    public void deleteUserRecord(String uid) throws Exception {
+        Firestore db = getDb();
+        db.collection("users").document(uid).delete().get();
+        System.out.println("Firestore record deleted for user: " + uid);
     }
 }

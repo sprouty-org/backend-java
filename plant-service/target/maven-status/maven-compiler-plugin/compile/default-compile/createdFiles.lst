@@ -1,7 +1,7 @@
 si\uni\fri\sprouty\controller\PlantController.class
-si\uni\fri\sprouty\model\MasterPlant.class
 si\uni\fri\sprouty\PlantServiceApplication.class
+si\uni\fri\sprouty\config\OpenApiConfig.class
+si\uni\fri\sprouty\service\WateringWatcher.class
 si\uni\fri\sprouty\service\PlantService.class
 si\uni\fri\sprouty\config\FirebaseConfig.class
-si\uni\fri\sprouty\model\UserPlant.class
 si\uni\fri\sprouty\service\PlantService$1.class

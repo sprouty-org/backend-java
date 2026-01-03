@@ -1,6 +1,5 @@
-si\uni\fri\sprouty\service\TokenResetService.class
-si\uni\fri\sprouty\model\User.class
 si\uni\fri\sprouty\service\FirebaseAuthService.class
+si\uni\fri\sprouty\config\OpenApiConfig.class
 si\uni\fri\sprouty\controller\AuthController.class
 si\uni\fri\sprouty\service\FirestoreService.class
 si\uni\fri\sprouty\UserServiceApplication.class

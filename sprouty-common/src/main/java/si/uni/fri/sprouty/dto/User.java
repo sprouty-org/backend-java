@@ -1,4 +1,4 @@
-package si.uni.fri.sprouty.model;
+package si.uni.fri.sprouty.dto;
 
 import lombok.Getter;
 import lombok.Setter;

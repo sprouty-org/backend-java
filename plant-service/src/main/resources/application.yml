@@ -14,6 +14,17 @@ plantnet:
   api:
     key: ${PLANTNET_API_KEY:?PlantNet Key is missing}
 
+logbook:
+  format:
+    style: http  # This is the "one-line" style
+  filter:
+    enabled: true
+  exclude:
+    - /actuator/**
+    - /favicon.ico
+
 logging:
   level:
-    root: INFO
+    root: WARN
+    org.springframework.web: INFO
+    org.zalando.logbook.Logbook: TRACE

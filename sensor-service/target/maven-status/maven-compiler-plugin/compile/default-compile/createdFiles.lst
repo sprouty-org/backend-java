@@ -1,4 +1,5 @@
+si\uni\fri\sprouty\SensorServiceApplication.class
+si\uni\fri\sprouty\config\OpenApiConfig.class
 si\uni\fri\sprouty\controller\SensorController.class
 si\uni\fri\sprouty\config\FirebaseConfig.class
-si\uni\fri\sprouty\SensorServiceApplication.class
 si\uni\fri\sprouty\service\SensorService.class

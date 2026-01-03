@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MasterPlant {
-    private String id; // Unique Global Plant ID
+    private String id;
     private String speciesName;
     private String type;
     private String life;
@@ -24,15 +24,11 @@ public class MasterPlant {
     private String light;
     private String soilH;
     private String airH;
-
-    @JsonProperty("water_interval")
-    private int waterInterval; // Match the JSON key exactly
-
+    private int waterInterval;
     private String growth;
     private String soil;
-
-    @JsonProperty("maxHeight")
     private int maxHeight;
+    private String careDifficulty;
 
     public MasterPlant() {}
 }

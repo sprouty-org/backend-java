@@ -59,22 +59,19 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
 
             byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
             var signingKey = Keys.hmacShaKeyFor(keyBytes);
-
-            // UPDATED FOR JJWT 0.12.x / 0.13.0
             Claims claims = Jwts.parser()
                     .verifyWith(signingKey)
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
 
-            // Forward the subject as a header for downstream services
+            // Forward the subject (UID) as a header
             String subject = claims.getSubject();
             if (subject != null && !subject.isBlank()) {
                 exchange = exchange.mutate()
                         .request(r -> r.header("X-User-Id", subject))
                         .build();
             }
-
         } catch (JwtException | IllegalArgumentException e) {
             return unauthorized(exchange);
         }

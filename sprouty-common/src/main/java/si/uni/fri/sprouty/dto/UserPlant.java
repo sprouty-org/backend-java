@@ -19,7 +19,8 @@ public class UserPlant {
 
     // Health & Growth
     private long lastWatered;
-    private String healthStatus;     // "Healthy", "Dry", "Overwatered"
+    private int targetWateringInterval; // in days
+    private String healthStatus;
     private long lastSeen; // Timestamp of the last sensor reading
 
     // Sensor & Notifications
@@ -27,7 +28,7 @@ public class UserPlant {
     private boolean notificationsEnabled = true;
 
     // The 3 new fields for real-time display
-    private double currentTemp;
+    private double currentTemperature;
     private double currentHumidityAir;
     private double currentHumiditySoil;
 

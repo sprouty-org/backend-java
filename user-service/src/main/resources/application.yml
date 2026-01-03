@@ -9,8 +9,18 @@ jwt:
   # Read secret from environment variable; fail if not set
   secret: ${JWT_SECRET:?JWT secret is missing}
 
-# Optional logging
+logbook:
+  format:
+    style: http  # This is the "one-line" style
+  filter:
+    enabled: true
+  exclude:
+    - /actuator/**
+    - /favicon.ico
+
 logging:
   level:
-    root: INFO
-    com.google.firebase: WARN
+    root: WARN
+    org.springframework.web: INFO
+    # This is the "magic" line to make it actually print
+    org.zalando.logbook.Logbook: TRACE

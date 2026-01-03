@@ -22,7 +22,7 @@ spring:
         - id: plant-service
           uri: http://plant-service:8082
           predicates:
-            - Path=/plants/**
+            - Path=/plants/{segment:^(?!internal$).*}/**
 
         - id: sensor-service
           uri: http://sensor-service:8083
@@ -52,3 +52,19 @@ management:
     web:
       exposure:
         include: "*"
+
+
+logbook:
+  format:
+    style: http  # This is the "one-line" style
+  filter:
+    enabled: true
+  exclude:
+    - /actuator/**
+    - /favicon.ico
+
+logging:
+  level:
+    root: WARN
+    org.springframework.web: INFO
+    org.zalando.logbook.Logbook: TRACE

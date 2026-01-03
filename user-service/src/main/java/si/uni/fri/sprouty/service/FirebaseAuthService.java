@@ -15,11 +15,7 @@ public class FirebaseAuthService {
      */
     public String verifyFirebaseToken(String idToken) throws Exception {
         try {
-            // The Firebase Admin SDK handles the verification of the 'iss' and 'aud'
-            // fields based on your service account configuration.
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-
-            // Returns the unique Firebase UID (e.g., qtKkkDaYiJhpluo9LFbVGPzYTj92)
             return decodedToken.getUid();
         } catch (FirebaseAuthException e) {
             System.err.println("Firebase Token verification failed: " + e.getMessage());
