@@ -1,22 +1,24 @@
 server:
-  port: 8081   # user-service port, matches gateway routing
+  port: 8081
 
 spring:
   application:
     name: user-service
 
 jwt:
-  # Read secret from environment variable; fail if not set
   secret: ${JWT_SECRET:?JWT secret is missing}
 
 logbook:
   format:
-    style: http  # This is the "one-line" style
+    style: http
   filter:
     enabled: true
-  exclude:
-    - /actuator/**
-    - /favicon.ico
+  predicate:
+    exclude:
+      - path: /actuator/**
+      - path: /favicon.ico
+      - path: /health
+      - path: /metrics
 
 logging:
   level:

@@ -82,12 +82,18 @@ public class SensorService {
 
     public String uploadSensorImage(byte[] imageBytes, String mac) {
         try {
-            Bucket bucket = StorageClient.getInstance().bucket();
+            String bucketName = "sprouty-plantapp.firebasestorage.app";
+            Bucket bucket = StorageClient.getInstance().bucket(bucketName);
+
             String fileName = String.format("sensors/%s/%d.jpg", mac, System.currentTimeMillis());
+
             Blob blob = bucket.create(fileName, imageBytes, "image/jpeg");
+
             return blob.signUrl(365, TimeUnit.DAYS).toString();
+
         } catch (Exception e) {
             System.err.println("Storage Upload Fail: " + e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -127,7 +133,8 @@ public class SensorService {
     private void checkAndSendAlert(UserPlant userPlant, String healthStatus) {
         NotificationRequest request = new NotificationRequest();
         request.setUserId(userPlant.getOwnerId());
-        request.setTitle("Sprouty Alert: " + userPlant.getCustomName());
+        String title = userPlant.getCustomName() != null && !userPlant.getCustomName().isBlank() ? userPlant.getCustomName() : userPlant.getSpeciesId();
+        request.setTitle("Sprouty Alert: " + title + " needs attention!");
 
         String message = getFriendlyMessage(healthStatus);
         request.setBody(message);

@@ -1,19 +1,15 @@
 package si.uni.fri.sprouty.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
+import org.springframework.web.multipart.MultipartFile;
 import si.uni.fri.sprouty.service.SensorService;
 
 import java.util.Map;
@@ -58,38 +54,37 @@ public class SensorController {
 
     @Operation(
             summary = "Upload Sensor Image",
-            description = "Uploads an image from a camera-enabled sensor (like ESP32-CAM) to Firebase Storage."
+            description = "Processes raw multipart stream from ESP32-CAM and uploads to Firebase Storage."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Image successfully stored and signed URL returned"),
+            @ApiResponse(responseCode = "200", description = "Image successfully stored"),
+            @ApiResponse(responseCode = "400", description = "Missing parts"),
             @ApiResponse(responseCode = "500", description = "Upload failed")
     })
     @PostMapping(value = "/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Mono<ResponseEntity<String>> uploadImage(
-            @Parameter(description = "MAC Address of the sensor") @RequestPart("sensorId") String sensorId,
-            @Parameter(description = "The image file (JPG/PNG)") @RequestPart("image") FilePart filePart) {
+    public ResponseEntity<String> uploadImage(
+            @RequestParam("sensorId") String sensorId,
+            @RequestParam("image") MultipartFile image) {
 
-        return filePart.content()
-                .map(dataBuffer -> {
-                    byte[] bytes = new byte[dataBuffer.readableByteCount()];
-                    dataBuffer.read(bytes);
-                    DataBufferUtils.release(dataBuffer);
-                    return bytes;
-                })
-                .collectList()
-                .flatMap(list -> {
-                    int totalSize = list.stream().mapToInt(b -> b.length).sum();
-                    byte[] allBytes = new byte[totalSize];
-                    int offset = 0;
-                    for (byte[] b : list) {
-                        System.arraycopy(b, 0, allBytes, offset, b.length);
-                        offset += b.length;
-                    }
+        try {
+            if (image.isEmpty()) {
+                return ResponseEntity.badRequest().body("Image file is empty");
+            }
 
-                    return Mono.fromCallable(() -> {
-                        String imageUrl = sensorService.uploadSensorImage(allBytes, sensorId);
-                        return ResponseEntity.ok("Image processed: " + imageUrl);
-                    }).subscribeOn(Schedulers.boundedElastic());
-                });
+            // Convert MultipartFile to byte[]
+            byte[] bytes = image.getBytes();
+
+            // Call the service (Synchronous version)
+            String imageUrl = sensorService.uploadSensorImage(bytes, sensorId);
+
+            if (imageUrl != null) {
+                return ResponseEntity.ok("Image processed: " + imageUrl);
+            } else {
+                return ResponseEntity.internalServerError().body("Failed to upload to storage");
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
+        }
     }
 }

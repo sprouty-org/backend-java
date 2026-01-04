@@ -10,6 +10,9 @@ openai:
   api:
     key: ${OPENAI_API_KEY:?OpenAI Key is missing}
 
+firebase:
+  storage-bucket: sprouty-plantapp.firebasestorage.app
+
 plantnet:
   api:
     key: ${PLANTNET_API_KEY:?PlantNet Key is missing}

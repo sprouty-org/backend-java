@@ -2,6 +2,7 @@ package si.uni.fri.sprouty.service;
 
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.SetOptions;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.stereotype.Service;
@@ -13,18 +14,22 @@ import java.util.Map;
 @Service
 public class FirestoreService {
 
+    private static final String FIRESTORE_DB_NAME = "sprouty-firestore";
+    private final String USERS_COLLECTION = "users";
+
     private Firestore getDb() {
-        return FirestoreClient.getFirestore(FirebaseApp.getInstance(), "sprouty-firestore");
+        return FirestoreClient.getFirestore(FirebaseApp.getInstance(), FIRESTORE_DB_NAME);
     }
 
     public void saveUser(User user) throws Exception {
         Firestore db = getDb();
-        DocumentReference docRef = db.collection("users").document(user.getUid());
+        DocumentReference docRef = db.collection(USERS_COLLECTION).document(user.getUid());
 
         if (!docRef.get().get().exists()) {
-            System.out.println("Creating new user: " + user.getUid());
+            // User does not exist, create new record
             docRef.set(user).get();
         } else {
+            // User exists, update FCM token
             updateFcmToken(user.getUid(), user.getFcmToken());
         }
     }
@@ -34,13 +39,12 @@ public class FirestoreService {
 
         try {
             Firestore db = getDb();
-            DocumentReference docRef = db.collection("users").document(uid);
+            DocumentReference docRef = db.collection(USERS_COLLECTION).document(uid);
 
             Map<String, Object> updates = new HashMap<>();
             updates.put("fcmToken", fcmToken);
 
             docRef.update(updates).get();
-            System.out.println("FCM Token updated for: " + uid);
         } catch (Exception e) {
             System.err.println("Error updating FCM token: " + e.getMessage());
         }
@@ -48,7 +52,6 @@ public class FirestoreService {
 
     public void deleteUserRecord(String uid) throws Exception {
         Firestore db = getDb();
-        db.collection("users").document(uid).delete().get();
-        System.out.println("Firestore record deleted for user: " + uid);
+        db.collection(USERS_COLLECTION).document(uid).delete().get();
     }
 }
