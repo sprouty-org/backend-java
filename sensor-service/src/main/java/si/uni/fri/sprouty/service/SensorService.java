@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 public class SensorService {
 
     private final RestTemplate restTemplate;
+    private final String NOTIFICATION_SERVICE_URL = "http://notification-service:8084/notifications/send";
 
     public SensorService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -33,8 +34,7 @@ public class SensorService {
     public void processSensorUpdate(String macAddress, double temp, double humAir, double humSoil) {
         try {
             Firestore db = getDb();
-            QuerySnapshot qs = db.collection("user_plants")
-                    .whereEqualTo("connectedSensorId", macAddress).get().get();
+            QuerySnapshot qs = db.collection("user_plants").whereEqualTo("connectedSensorId", macAddress).get().get();
 
             if (qs.isEmpty()) return;
 
@@ -43,6 +43,7 @@ public class SensorService {
 
             DocumentSnapshot masterDoc = db.collection("master_plants").document(userPlant.getSpeciesId()).get().get();
             MasterPlant master = masterDoc.toObject(MasterPlant.class);
+
             String newHealthStatus = (master != null) ? calculateHealth(temp, humSoil, humAir, master) : "Unknown";
 
             // Update Firestore
@@ -54,10 +55,8 @@ public class SensorService {
             updates.put("lastSeen", System.currentTimeMillis());
             doc.getReference().update(updates).get();
 
-            // 1. ALWAYS Trigger a silent sync so the Android UI updates live data
             triggerSilentSync(userPlant.getOwnerId());
 
-            // 2. Only send a visible alert if the health state actually changed to something bad
             if (master != null && userPlant.isNotificationsEnabled() && !newHealthStatus.equals("Healthy") && !newHealthStatus.equals(userPlant.getHealthStatus())) {
                 checkAndSendAlert(userPlant, newHealthStatus);
             }
@@ -73,8 +72,7 @@ public class SensorService {
         syncRequest.setUserId(userId);
 
         try {
-            String url = "http://notification-service:8084/notifications/send";
-            restTemplate.postForEntity(url, syncRequest, String.class);
+            restTemplate.postForEntity(NOTIFICATION_SERVICE_URL, syncRequest, String.class);
         } catch (Exception e) {
             System.err.println("Silent sync failed: " + e.getMessage());
         }
@@ -93,7 +91,6 @@ public class SensorService {
 
         } catch (Exception e) {
             System.err.println("Storage Upload Fail: " + e.getMessage());
-            e.printStackTrace();
             return null;
         }
     }
@@ -140,7 +137,7 @@ public class SensorService {
         request.setBody(message);
 
         try {
-            restTemplate.postForEntity("http://notification-service:8084/notifications/send", request, String.class);
+            restTemplate.postForEntity(NOTIFICATION_SERVICE_URL, request, String.class);
         } catch (Exception e) {
             System.err.println("Notification Service unreachable: " + e.getMessage());
         }
