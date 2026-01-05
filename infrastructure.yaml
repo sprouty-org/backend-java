@@ -28,19 +28,19 @@ spec:
               cpu: "1000m"
           readinessProbe:
             httpGet:
-              path: /actuator/health
+              path: /users/register
               port: 8081
-            initialDelaySeconds: 45
+            initialDelaySeconds: 90 # Increased for Java startup
             periodSeconds: 10
-            timeoutSeconds: 3
           livenessProbe:
             httpGet:
-              path: /actuator/health
+              path: /users/register
               port: 8081
-            initialDelaySeconds: 60
+            initialDelaySeconds: 120
             periodSeconds: 20
-            timeoutSeconds: 3
           env:
+            - name: JAVA_TOOL_OPTIONS
+              value: "-Xmx1024m -XX:+UseContainerSupport" # Memory Safety
             - name: JWT_SECRET
               valueFrom: { secretKeyRef: { name: app-secrets, key: jwt-secret } }
             - name: GOOGLE_APPLICATION_CREDENTIALS
@@ -90,19 +90,19 @@ spec:
               cpu: "1000m"
           readinessProbe:
             httpGet:
-              path: /actuator/health
+              path: /plants
               port: 8082
-            initialDelaySeconds: 45
+            initialDelaySeconds: 90
             periodSeconds: 10
-            timeoutSeconds: 3
           livenessProbe:
             httpGet:
-              path: /actuator/health
+              path: /plants
               port: 8082
-            initialDelaySeconds: 60
+            initialDelaySeconds: 120
             periodSeconds: 20
-            timeoutSeconds: 3
           env:
+            - name: JAVA_TOOL_OPTIONS
+              value: "-Xmx1024m -XX:+UseContainerSupport"
             - name: JWT_SECRET
               valueFrom: { secretKeyRef: { name: app-secrets, key: jwt-secret } }
             - name: GOOGLE_APPLICATION_CREDENTIALS
@@ -156,19 +156,19 @@ spec:
               cpu: "1000m"
           readinessProbe:
             httpGet:
-              path: /actuator/health
+              path: /sensors
               port: 8083
-            initialDelaySeconds: 45
+            initialDelaySeconds: 90
             periodSeconds: 10
-            timeoutSeconds: 3
           livenessProbe:
             httpGet:
-              path: /actuator/health
+              path: /sensors
               port: 8083
-            initialDelaySeconds: 60
+            initialDelaySeconds: 120
             periodSeconds: 20
-            timeoutSeconds: 3
           env:
+            - name: JAVA_TOOL_OPTIONS
+              value: "-Xmx1024m -XX:+UseContainerSupport"
             - name: JWT_SECRET
               valueFrom: { secretKeyRef: { name: app-secrets, key: jwt-secret } }
             - name: GOOGLE_APPLICATION_CREDENTIALS
@@ -218,19 +218,19 @@ spec:
               cpu: "1000m"
           readinessProbe:
             httpGet:
-              path: /actuator/health
+              path: /notifications
               port: 8084
-            initialDelaySeconds: 45
+            initialDelaySeconds: 90
             periodSeconds: 10
-            timeoutSeconds: 3
           livenessProbe:
             httpGet:
-              path: /actuator/health
+              path: /notifications
               port: 8084
-            initialDelaySeconds: 60
+            initialDelaySeconds: 120
             periodSeconds: 20
-            timeoutSeconds: 3
           env:
+            - name: JAVA_TOOL_OPTIONS
+              value: "-Xmx1024m -XX:+UseContainerSupport"
             - name: JWT_SECRET
               valueFrom: { secretKeyRef: { name: app-secrets, key: jwt-secret } }
             - name: GOOGLE_APPLICATION_CREDENTIALS
@@ -283,14 +283,12 @@ spec:
               port: 8080
             initialDelaySeconds: 30
             periodSeconds: 10
-            timeoutSeconds: 3
           livenessProbe:
             httpGet:
               path: /actuator/health
               port: 8080
             initialDelaySeconds: 45
             periodSeconds: 20
-            timeoutSeconds: 3
           env:
             - name: JWT_SECRET
               valueFrom: { secretKeyRef: { name: app-secrets, key: jwt-secret } }
