@@ -28,19 +28,19 @@ spec:
               cpu: "1000m"
           readinessProbe:
             httpGet:
-              path: /users/register
+              path: /health
               port: 8081
-            initialDelaySeconds: 90 # Increased for Java startup
+            initialDelaySeconds: 60
             periodSeconds: 10
           livenessProbe:
             httpGet:
-              path: /users/register
+              path: /health
               port: 8081
-            initialDelaySeconds: 120
+            initialDelaySeconds: 90
             periodSeconds: 20
           env:
             - name: JAVA_TOOL_OPTIONS
-              value: "-Xmx1024m -XX:+UseContainerSupport" # Memory Safety
+              value: "-Xmx1024m -XX:+UseContainerSupport"
             - name: JWT_SECRET
               valueFrom: { secretKeyRef: { name: app-secrets, key: jwt-secret } }
             - name: GOOGLE_APPLICATION_CREDENTIALS
@@ -90,15 +90,15 @@ spec:
               cpu: "1000m"
           readinessProbe:
             httpGet:
-              path: /plants
+              path: /health
               port: 8082
-            initialDelaySeconds: 90
+            initialDelaySeconds: 60
             periodSeconds: 10
           livenessProbe:
             httpGet:
-              path: /plants
+              path: /health
               port: 8082
-            initialDelaySeconds: 120
+            initialDelaySeconds: 90
             periodSeconds: 20
           env:
             - name: JAVA_TOOL_OPTIONS
@@ -156,15 +156,15 @@ spec:
               cpu: "1000m"
           readinessProbe:
             httpGet:
-              path: /sensors
+              path: /health
               port: 8083
-            initialDelaySeconds: 90
+            initialDelaySeconds: 60
             periodSeconds: 10
           livenessProbe:
             httpGet:
-              path: /sensors
+              path: /health
               port: 8083
-            initialDelaySeconds: 120
+            initialDelaySeconds: 90
             periodSeconds: 20
           env:
             - name: JAVA_TOOL_OPTIONS
@@ -218,15 +218,15 @@ spec:
               cpu: "1000m"
           readinessProbe:
             httpGet:
-              path: /notifications
+              path: /health
               port: 8084
-            initialDelaySeconds: 90
+            initialDelaySeconds: 60
             periodSeconds: 10
           livenessProbe:
             httpGet:
-              path: /notifications
+              path: /health
               port: 8084
-            initialDelaySeconds: 120
+            initialDelaySeconds: 90
             periodSeconds: 20
           env:
             - name: JAVA_TOOL_OPTIONS
@@ -279,17 +279,19 @@ spec:
               cpu: "1000m"
           readinessProbe:
             httpGet:
-              path: /actuator/health
+              path: /health # Also updated Gateway to be consistent
               port: 8080
             initialDelaySeconds: 30
             periodSeconds: 10
           livenessProbe:
             httpGet:
-              path: /actuator/health
+              path: /health
               port: 8080
             initialDelaySeconds: 45
             periodSeconds: 20
           env:
+            - name: JAVA_TOOL_OPTIONS
+              value: "-Xmx1024m -XX:+UseContainerSupport"
             - name: JWT_SECRET
               valueFrom: { secretKeyRef: { name: app-secrets, key: jwt-secret } }
 ---
