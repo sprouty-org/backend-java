@@ -1,0 +1,257 @@
+# --- USER SERVICE ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+        - name: user-service
+          image: user-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8081
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8081
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          env:
+            - name: JWT_SECRET
+              valueFrom: { secretKeyRef: { name: app-secrets, key: jwt-secret } }
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /app/firebase-key.json
+          volumeMounts:
+            - name: firebase-key-vol
+              mountPath: /app/firebase-key.json
+              subPath: firebase-key.json
+      volumes:
+        - name: firebase-key-vol
+          secret: { secretName: firebase-key }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+spec:
+  selector: { app: user-service }
+  ports: [{ port: 80, targetPort: 8081 }]
+
+---
+# --- PLANT SERVICE ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plant-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: plant-service
+  template:
+    metadata:
+      labels: { app: plant-service }
+    spec:
+      containers:
+        - name: plant-service
+          image: plant-service:latest
+          imagePullPolicy: Never
+          ports: [{ containerPort: 8082 }]
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8082
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8082
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          env:
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /app/firebase-key.json
+            - name: OPENAI_API_KEY
+              valueFrom: { secretKeyRef: { name: app-secrets, key: openai-key } }
+            - name: PLANTNET_API_KEY
+              valueFrom: { secretKeyRef: { name: app-secrets, key: plantnet-key } }
+          volumeMounts:
+            - name: firebase-key-vol
+              mountPath: /app/firebase-key.json
+              subPath: firebase-key.json
+      volumes:
+        - name: firebase-key-vol
+          secret: { secretName: firebase-key }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: plant-service
+spec:
+  selector: { app: plant-service }
+  ports: [{ port: 80, targetPort: 8082 }]
+
+---
+# --- SENSOR SERVICE ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sensor-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sensor-service
+  template:
+    metadata:
+      labels: { app: sensor-service }
+    spec:
+      containers:
+        - name: sensor-service
+          image: sensor-service:latest
+          imagePullPolicy: Never
+          ports: [{ containerPort: 8083 }]
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8083
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8083
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          env:
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /app/firebase-key.json
+          volumeMounts:
+            - name: firebase-key-vol
+              mountPath: /app/firebase-key.json
+              subPath: firebase-key.json
+      volumes:
+        - name: firebase-key-vol
+          secret: { secretName: firebase-key }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sensor-service
+spec:
+  selector: { app: sensor-service }
+  ports: [{ port: 80, targetPort: 8083 }]
+
+---
+# --- NOTIFICATION SERVICE ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+  template:
+    metadata:
+      labels: { app: notification-service }
+    spec:
+      containers:
+        - name: notification-service
+          image: notification-service:latest
+          imagePullPolicy: Never
+          ports: [{ containerPort: 8084 }]
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8084
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8084
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          env:
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /app/firebase-key.json
+          volumeMounts:
+            - name: firebase-key-vol
+              mountPath: /app/firebase-key.json
+              subPath: firebase-key.json
+      volumes:
+        - name: firebase-key-vol
+          secret: { secretName: firebase-key }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-service
+spec:
+  selector: { app: notification-service }
+  ports: [{ port: 80, targetPort: 8084 }]
+
+---
+# --- GATEWAY SERVICE ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: gateway-service }
+  template:
+    metadata:
+      labels: { app: gateway-service }
+    spec:
+      containers:
+        - name: gateway-service
+          image: gateway-service:v6
+          imagePullPolicy: Never
+          ports: [{ containerPort: 8080 }]
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          env:
+            - name: JWT_SECRET
+              valueFrom: { secretKeyRef: { name: app-secrets, key: jwt-secret } }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-service
+spec:
+  type: NodePort
+  selector: { app: gateway-service }
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30080

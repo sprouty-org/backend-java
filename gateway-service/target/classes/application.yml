@@ -1,70 +1,59 @@
 server:
   port: 8080
-
 spring:
   application:
     name: gateway-service
-
   cloud:
     gateway:
-      httpclient:
-        connect-timeout: 10000
-        response-timeout: 30s
-
-      default-filters:
-
       routes:
         - id: user-service
-          uri: http://user-service:8081
+          uri: http://user-service
           predicates:
             - Path=/users/**
-
         - id: plant-service
-          uri: http://plant-service:8082
+          uri: http://plant-service
           predicates:
             - Path=/plants/{segment:^(?!internal$).*}/**
-
         - id: sensor-service
-          uri: http://sensor-service:8083
+          uri: http://sensor-service
           predicates:
             - Path=/sensors/**
-
         - id: notification-service
-          uri: http://notification-service:8084
+          uri: http://notification-service
           predicates:
             - Path=/notifications/**
-
       globalcors:
-        corsConfigurations:
+        cors-configurations:
           '[/**]':
             allowedOrigins: "*"
             allowedMethods: "*"
             allowedHeaders: "*"
-
       grpc:
         enabled: false
 
+# ADD THIS BLOCK
+springdoc:
+  swagger-ui:
+    urls:
+      - name: User Service
+        url: /users/v3/api-docs
+      - name: Plant Service
+        url: /plants/v3/api-docs
+      - name: Sensor Service
+        url: /sensors/v3/api-docs
+      - name: Notification Service
+        url: /notifications/v3/api-docs
+
 jwt:
-  secret: ${JWT_SECRET:?JWT secret must be provided}
+  secret: ${JWT_SECRET}
 
 management:
   endpoints:
     web:
       exposure:
-        include: "*"
-
-
-logbook:
-  format:
-    style: http  # This is the "one-line" style
-  filter:
-    enabled: true
-  exclude:
-    - /actuator/**
-    - /favicon.ico
-
-logging:
-  level:
-    root: WARN
-    org.springframework.web: INFO
-    org.zalando.logbook.Logbook: TRACE
+        include: "health,info,prometheus"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always

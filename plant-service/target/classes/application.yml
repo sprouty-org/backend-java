@@ -5,6 +5,12 @@ spring:
   application:
     name: plant-service
 
+springdoc:
+  api-docs:
+    path: /plants/v3/api-docs
+  swagger-ui:
+    use-root-path: true
+
 openai:
   api:
     key: ${OPENAI_API_KEY:?OpenAI Key is missing}
@@ -30,3 +36,14 @@ logging:
     root: WARN
     org.springframework.web: INFO
     org.zalando.logbook.Logbook: TRACE
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,prometheus"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always

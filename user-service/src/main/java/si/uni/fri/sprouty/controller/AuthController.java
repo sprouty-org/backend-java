@@ -135,7 +135,6 @@ public class AuthController {
                     .uri(uriBuilder -> uriBuilder
                             .scheme("http")
                             .host("plant-service")
-                            .port(8082)
                             .path("/plants/internal/user")
                             .queryParam("uid", uid)
                             .build())

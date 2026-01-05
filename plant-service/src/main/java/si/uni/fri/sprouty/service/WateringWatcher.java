@@ -106,7 +106,7 @@ public class WateringWatcher {
         request.setBody(plantName + " needs attention: " + reason);
 
         try {
-            restTemplate.postForEntity("http://notification-service:8084/notifications/send", request, String.class);
+            restTemplate.postForEntity("http://notification-service/notifications/send", request, String.class);
         } catch (Exception e) {
             System.err.println("Failed to send notification: " + e.getMessage());
         }

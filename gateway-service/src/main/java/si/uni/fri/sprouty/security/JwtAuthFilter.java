@@ -25,7 +25,13 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
     private final List<String> publicEndpoints = List.of(
             "/users/login",
             "/users/register",
-            "/sensors"
+            "/sensors",
+            "/swagger-ui",
+            "/v3/api-docs",
+            "/users/v3/api-docs",
+            "/plants/v3/api-docs",
+            "/sensors/v3/api-docs",
+            "/notifications/v3/api-docs"
     );
 
     @Value("${jwt.secret:}")

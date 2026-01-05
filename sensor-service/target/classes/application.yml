@@ -5,6 +5,13 @@ spring:
   application:
     name: sensor-service
 
+springdoc:
+  api-docs:
+    path: /sensors/v3/api-docs
+  swagger-ui:
+    use-root-path: true
+
+
 logbook:
   format:
     style: http
@@ -19,3 +26,14 @@ logging:
     root: WARN
     org.springframework.web: INFO
     org.zalando.logbook.Logbook: TRACE
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,prometheus"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always

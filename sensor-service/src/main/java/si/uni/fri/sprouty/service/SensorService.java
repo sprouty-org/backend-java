@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 public class SensorService {
 
     private final RestTemplate restTemplate;
-    private final String NOTIFICATION_SERVICE_URL = "http://notification-service:8084/notifications/send";
+    private final String NOTIFICATION_SERVICE_URL = "http://notification-service/notifications/send";
 
     public SensorService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
