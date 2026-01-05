@@ -17,9 +17,10 @@ logbook:
     style: http
   filter:
     enabled: true
-  exclude:
-    - /actuator/**
-    - /favicon.ico
+  predicate:
+    exclude:
+      - /actuator/**
+      - /favicon.ico
 
 logging:
   level:
@@ -30,6 +31,7 @@ logging:
 management:
   endpoints:
     web:
+      base-path: /actuator
       exposure:
         include: "health,info,prometheus"
   endpoint:
