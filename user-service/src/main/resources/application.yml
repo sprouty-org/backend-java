@@ -24,5 +24,4 @@ logging:
   level:
     root: WARN
     org.springframework.web: INFO
-    # This is the "magic" line to make it actually print
     org.zalando.logbook.Logbook: TRACE

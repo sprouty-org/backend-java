@@ -58,7 +58,6 @@ public class FcmService {
 
         } catch (Exception e) {
             System.err.println("FCM Exception: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 }

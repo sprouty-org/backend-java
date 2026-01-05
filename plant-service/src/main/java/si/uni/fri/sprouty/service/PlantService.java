@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import si.uni.fri.sprouty.dto.GardenProfileResponse;
 import si.uni.fri.sprouty.dto.MasterPlant;
 import com.google.cloud.firestore.*;
 import si.uni.fri.sprouty.dto.UserPlant;
@@ -45,10 +46,6 @@ public class PlantService {
     }
 
 
-    /**
-     * Helper to fetch a plant document and verify the requester is the owner.
-     * Returns the DocumentReference for further updates.
-     */
     private DocumentReference getValidatedPlantReference(String userId, String plantId) throws Exception {
         DocumentReference docRef = db.collection("user_plants").document(plantId);
         DocumentSnapshot snapshot = docRef.get().get();
@@ -67,34 +64,20 @@ public class PlantService {
 
     public void manageSensor(String userId, String plantId, String sensorId) throws Exception {
         DocumentReference docRef = getValidatedPlantReference(userId, plantId);
-
         String targetId = (sensorId == null || sensorId.isBlank()) ? null : sensorId;
         docRef.update("connectedSensorId", targetId).get();
-        System.out.println(targetId == null ?
-                "Sensor unlinked from plant " + plantId :
-                "Sensor " + sensorId + " linked to plant " + plantId);
     }
 
-    /**
-     * Updates the custom name of a plant.
-     * If newName is empty, it can revert to the default species name.
-     */
+
     public void updatePlantName(String userId, String plantId, String newName) throws Exception {
         DocumentReference docRef = getValidatedPlantReference(userId, plantId);
-
         String targetName = (newName == null || newName.isBlank()) ? null : newName.trim();
-
-        // Update Firestore document
         docRef.update("customName", targetName).get();
-
-        System.out.println("Plant " + plantId + " renamed to: " +
-                (targetName != null ? targetName : "Default Species Name"));
     }
 
     public void updateNotificationSettings(String userId, String plantId, boolean enabled) throws Exception {
         DocumentReference docRef = getValidatedPlantReference(userId, plantId);
         docRef.update("notificationsEnabled", enabled).get();
-        System.out.println("Notifications for plant " + plantId + " set to: " + enabled);
     }
 
     public Map<String, Object> identifyAndProcess(String uid, byte[] imageBytes) throws Exception {
@@ -123,7 +106,7 @@ public class PlantService {
         userPlant.setLastWatered(System.currentTimeMillis());
         userPlant.setTargetWateringInterval(masterPlant.getWaterInterval());
         userPlant.setHealthStatus("Healthy");
-        userPlant.setConnectedSensorId(null); // Initially no sensor
+        userPlant.setConnectedSensorId(null);
 
         DocumentReference userPlantRef = db.collection("user_plants").document();
         userPlant.setId(userPlantRef.getId());
@@ -171,7 +154,7 @@ public class PlantService {
                         "\"light\": (string: e.g., 'Bright Indirect Light'), " +
                         "\"soilH\": \"n1,n2\" (Numeric range 0-100, no spaces), " +
                         "\"airH\": \"n1,n2\" (Numeric range 0-100, no spaces), " +
-                        "\"water_interval\": (Integer, days between watering), " +
+                        "\"waterInterval\": (Integer, days between watering), " +
                         "\"growth\": (fast/moderate/slow), " +
                         "\"soil\": (Specific soil preference, e.g., 'Well-draining sandy loam'), " +
                         "\"maxHeight\": (Integer, cm), " +
@@ -240,7 +223,6 @@ public class PlantService {
         List<QueryDocumentSnapshot> documents = future.get().getDocuments();
 
         if (documents.isEmpty()) {
-            System.out.println("No plants found to delete for user: " + uid);
             return;
         }
 
@@ -248,9 +230,7 @@ public class PlantService {
         for (QueryDocumentSnapshot doc : documents) {
             batch.delete(doc.getReference());
         }
-
         batch.commit().get();
-        System.out.println("Successfully deleted " + documents.size() + " plants for user: " + uid);
     }
 
     public void resetWateringTimer(String userId, String plantId) throws Exception {
@@ -260,7 +240,32 @@ public class PlantService {
         if (!snapshot.exists() || !Objects.equals(snapshot.getString("ownerId"), userId)) {
             throw new Exception("Unauthorized or plant not found");
         }
-
         docRef.update("lastWatered", System.currentTimeMillis()).get();
+    }
+
+    public GardenProfileResponse getFullGardenProfile(String uid) throws Exception {
+        List<UserPlant> userPlants = getUserPlants(uid);
+        if (userPlants.isEmpty()) {
+            return new GardenProfileResponse(List.of(), List.of());
+        }
+
+        List<String> speciesIds = userPlants.stream()
+                .map(UserPlant::getSpeciesId)
+                .distinct()
+                .filter(id -> id != null && !id.isEmpty())
+                .collect(Collectors.toList());
+
+        if (speciesIds.isEmpty()) {
+            return new GardenProfileResponse(userPlants, List.of());
+        }
+
+        Query masterQuery = db.collection("master_plants").whereIn(FieldPath.documentId(), speciesIds);
+        List<MasterPlant> masterPlants = masterQuery.get().get().getDocuments().stream()
+                .map(doc -> {
+                    MasterPlant master = doc.toObject(MasterPlant.class);
+                    master.setId(doc.getId());
+                    return master;
+                }).collect(Collectors.toList());
+        return new GardenProfileResponse(userPlants, masterPlants);
     }
 }

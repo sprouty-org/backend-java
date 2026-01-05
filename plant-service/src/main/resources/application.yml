@@ -5,7 +5,6 @@ spring:
   application:
     name: plant-service
 
-# External API Keys from .env
 openai:
   api:
     key: ${OPENAI_API_KEY:?OpenAI Key is missing}
@@ -19,7 +18,7 @@ plantnet:
 
 logbook:
   format:
-    style: http  # This is the "one-line" style
+    style: http
   filter:
     enabled: true
   exclude:

@@ -1,35 +1,56 @@
 package si.uni.fri.sprouty.dto;
 
-
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Schema(description = "User-specific plant instance linked to real-time hardware sensors")
 public class UserPlant {
-    private String id;               // Unique ID for this specific physical plant
-    private String ownerId;          // Link to User
-    private String speciesId;        // Link to Global Plant ID (Foreign Key)
-    private String speciesName;      // Redundant but fast for UI display
+    @Schema(description = "Unique database ID")
+    private String id;
 
-    // User Customization
+    @Schema(description = "Owner Firebase UID")
+    private String ownerId;
+
+    @Schema(description = "Reference to the AI-generated species data")
+    private String speciesId;
+
+    @Schema(example = "Monstera")
+    private String speciesName;
+
+    @Schema(description = "Personal nickname for the plant", example = "Monty")
     private String customName;
 
+    @Schema(description = "Firebase storage URL for the plant photo")
     private String imageUrl;
 
-    // Health & Growth
+    @Schema(description = "Timestamp of the last water log")
     private long lastWatered;
-    private int targetWateringInterval; // in days
-    private String healthStatus;
-    private long lastSeen; // Timestamp of the last sensor reading
 
-    // Sensor & Notifications
+    @Schema(description = "User-adjusted watering frequency (days)", example = "7")
+    private int targetWateringInterval;
+
+    @Schema(description = "Calculated health based on sensor data vs AI thresholds", example = "Thirsty")
+    private String healthStatus;
+
+    @Schema(description = "Last time the ESP32 checked in")
+    private long lastSeen;
+
+    @Schema(description = "MAC address of the ESP32-S3/CAM")
     private String connectedSensorId;
+
+    @Schema(description = "Active push notification status")
     private boolean notificationsEnabled = true;
 
-    // The 3 new fields for real-time display
+    @Schema(description = "Real-time Temp from DHT11 (°C)")
     private double currentTemperature;
+
+    @Schema(description = "Real-time Air Humidity from DHT11 (%)")
     private double currentHumidityAir;
+
+    @Schema(description = "Real-time Soil Moisture from Analog Probe (%)")
     private double currentHumiditySoil;
 
     public UserPlant() {}

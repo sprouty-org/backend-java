@@ -22,10 +22,6 @@ public class FirebaseConfig {
     @Value("${firebase.storage-bucket:sprouty-plantapp.firebasestorage.app}")
     private String storageBucket;
 
-    /**
-     * Initializes the Firebase SDK.
-     * Using @PostConstruct ensures this happens exactly once when the bean is created.
-     */
     @PostConstruct
     public void initializeFirebase() {
         try {
@@ -44,19 +40,13 @@ public class FirebaseConfig {
         }
     }
 
-    /**
-     * Provides the Firestore instance as a Spring Bean.
-     * Marks as @Primary to ensure it's the default choice for injection.
-     */
     @Bean
     @Primary
     public Firestore getFirestore() {
         return FirestoreClient.getFirestore();
     }
 
-    /**
-     * RestTemplate bean for external API calls.
-     */
+
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();

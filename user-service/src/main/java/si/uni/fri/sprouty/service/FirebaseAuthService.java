@@ -8,11 +8,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class FirebaseAuthService {
 
-    /**
-     * Verifies a Firebase ID Token.
-     * This works for tokens issued via Google Sign-In (once linked to Firebase)
-     * and standard Email/Password login.
-     */
     public String verifyFirebaseToken(String idToken) throws Exception {
         try {
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);

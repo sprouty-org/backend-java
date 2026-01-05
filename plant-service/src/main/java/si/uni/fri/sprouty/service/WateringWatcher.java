@@ -27,10 +27,8 @@ public class WateringWatcher {
     @Scheduled(fixedRate = 43200000) // Every 12 hours
     public void observePlantThirst() {
         try {
-            // 1. Load Master Data thresholds
             Map<String, Double> speciesThresholds = loadMasterHumidityThresholds();
 
-            // 2. Load User Plants with notifications active
             ApiFuture<QuerySnapshot> future = firestore.collection("user_plants")
                     .whereEqualTo("notificationsEnabled", true)
                     .get();
@@ -45,37 +43,29 @@ public class WateringWatcher {
                 Long intervalDays = doc.getLong("targetWateringInterval");
                 Double currentSoilHum = doc.getDouble("currentHumiditySoil");
                 Long lastSeen = doc.getLong("lastSeen");
-                String sensorId = doc.getString("connectedSensorId"); // Check if sensor exists
+                String sensorId = doc.getString("connectedSensorId");
 
                 if (lastWatered == null || intervalDays == null) continue;
 
                 double dryThreshold = speciesThresholds.getOrDefault(speciesName, 30.0);
                 long secondsInInterval = intervalDays * oneDayInSeconds;
 
-                // Logic Flags
                 boolean isOverdueByCalendar = nowInSeconds > (lastWatered + secondsInInterval);
                 boolean hasSensor = (sensorId != null && !sensorId.isEmpty());
                 boolean isDataFresh = (lastSeen != null && (nowInSeconds - lastSeen) < oneDayInSeconds);
 
-                // We only trust currentSoilHum if there's a sensor AND the data isn't stale
                 boolean canTrustSensor = hasSensor && isDataFresh;
                 boolean isActuallyDry = (canTrustSensor && currentSoilHum != null && currentSoilHum < dryThreshold);
 
-                // LOGIC ENGINE
                 if (isOverdueByCalendar) {
-                    // If we have fresh sensor data, and it says it's NOT dry, we override the calendar
                     if (canTrustSensor && currentSoilHum != null && currentSoilHum >= dryThreshold) {
                         System.out.println("Override for " + doc.getString("customName") +
                                 ": Calendar says water, but fresh sensor data says soil is still moist.");
-                    }
-                    // If sensor data says it's dry
-                    else if (isActuallyDry) {
+                    } else if (isActuallyDry) {
                         sendWateringReminder(doc.getString("ownerId"), doc.getString("customName"),
                                 String.format("The soil is at %.1f%% (Recommended: >%.1f%%). Time for water!",
                                         currentSoilHum, dryThreshold));
-                    }
-                    // Fallback: No sensor, or sensor is offline/old data -> Rely on Calendar
-                    else {
+                    } else {
                         String reason = (!hasSensor) ?
                                 "It's been " + intervalDays + " days since your last watering." :
                                 "It's time to water, and your sensor hasn't reported in over 24 hours.";
@@ -89,17 +79,13 @@ public class WateringWatcher {
         }
     }
 
-    /**
-     * Fetches master plants and extracts the minimum soil humidity.
-     * Expects "soilH" string format: "min, max" (e.g., "30, 70")
-     */
     private Map<String, Double> loadMasterHumidityThresholds() throws Exception {
         Map<String, Double> thresholds = new HashMap<>();
         ApiFuture<QuerySnapshot> masterFuture = firestore.collection("master_plants").get();
 
         for (QueryDocumentSnapshot doc : masterFuture.get().getDocuments()) {
             String species = doc.getString("speciesName");
-            String soilH = doc.getString("soilH"); // Format: "30, 70"
+            String soilH = doc.getString("soilH");
 
             if (species != null && soilH != null) {
                 try {

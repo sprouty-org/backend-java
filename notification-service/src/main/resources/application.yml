@@ -1,5 +1,5 @@
 server:
-  port: 8084   # user-service port, matches gateway routing
+  port: 8084
 
 spring:
   application:
@@ -8,7 +8,7 @@ spring:
 
 logbook:
   format:
-    style: http  # This is the "one-line" style
+    style: http
   filter:
     enabled: true
   exclude:
