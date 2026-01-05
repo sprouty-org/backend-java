@@ -1,5 +1,5 @@
 # Maven
-/target/
+/target
 /pom.xml.tag
 /pom.xml.releaseBackup
 /pom.xml.versionsBackup
@@ -9,12 +9,12 @@
 /buildNumber.properties
 
 # IntelliJ IDEA
-/.idea/
+/.idea
 /*.iml
 /*.iws
-/out/
-/.idea_modules/
-/.idea/runConfigurations/
+/out
+/.idea_modules
+/.idea/runConfigurations
 
 # Java build / binary files
 *.class
@@ -48,6 +48,8 @@ desktop.ini
 secrets.properties
 credentials.properties
 firebase-key.json
+gcp-key.json
+cleanup-policy.json
 
 # Docker overrides
 docker-compose.override.yml
