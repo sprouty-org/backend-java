@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: user-service
-          image: user-service:latest
-          imagePullPolicy: Never
+          image: europe-west4-docker.pkg.dev/sprouty-plantapp/sprouty-repo/user-service:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8081
           readinessProbe:
@@ -69,8 +69,8 @@ spec:
     spec:
       containers:
         - name: plant-service
-          image: plant-service:latest
-          imagePullPolicy: Never
+          image: europe-west4-docker.pkg.dev/sprouty-plantapp/sprouty-repo/plant-service:latest
+          imagePullPolicy: Always
           ports: [{ containerPort: 8082 }]
           readinessProbe:
             httpGet:
@@ -124,8 +124,8 @@ spec:
     spec:
       containers:
         - name: sensor-service
-          image: sensor-service:latest
-          imagePullPolicy: Never
+          image: europe-west4-docker.pkg.dev/sprouty-plantapp/sprouty-repo/sensor-service:latest
+          imagePullPolicy: Always
           ports: [{ containerPort: 8083 }]
           readinessProbe:
             httpGet:
@@ -175,8 +175,8 @@ spec:
     spec:
       containers:
         - name: notification-service
-          image: notification-service:latest
-          imagePullPolicy: Never
+          image: europe-west4-docker.pkg.dev/sprouty-plantapp/sprouty-repo/notification-service:latest
+          imagePullPolicy: Always
           ports: [{ containerPort: 8084 }]
           readinessProbe:
             httpGet:
@@ -225,8 +225,8 @@ spec:
     spec:
       containers:
         - name: gateway-service
-          image: gateway-service:v6
-          imagePullPolicy: Never
+          image: europe-west4-docker.pkg.dev/sprouty-plantapp/sprouty-repo/gateway-service:latest
+          imagePullPolicy: Always
           ports: [{ containerPort: 8080 }]
           readinessProbe:
             httpGet:
@@ -249,9 +249,8 @@ kind: Service
 metadata:
   name: gateway-service
 spec:
-  type: NodePort
+  type: LoadBalancer # CHANGED: This creates a Public IP in GKE
   selector: { app: gateway-service }
   ports:
-    - port: 8080
+    - port: 80
       targetPort: 8080
-      nodePort: 30080

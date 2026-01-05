@@ -6,3 +6,63 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+
+# Maven
+/target/
+/pom.xml.tag
+/pom.xml.releaseBackup
+/pom.xml.versionsBackup
+/pom.xml.next
+/release.properties
+/dependency-reduced-pom.xml
+/buildNumber.properties
+
+# IntelliJ IDEA
+/.idea/
+/*.iml
+/*.iws
+/out/
+/.idea_modules/
+/.idea/runConfigurations/
+
+# Java build / binary files
+*.class
+*.jar
+*.war
+*.ear
+*.jar.original
+
+# Logs and reports
+*.log
+/logs/
+/build/reports/
+/coverage/
+jacoco.exec
+/test-output/
+
+# OS generated
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary / swap files
+*~
+*.tmp
+*.swp
+*.bak
+
+# Secrets / local config (do not commit credentials)
+.env
+.env.*
+secrets.properties
+credentials.properties
+firebase-key.json
+
+# Docker overrides
+docker-compose.override.yml
+.docker/
+
+# Misc
+/*.log.*
+/local.properties
+.idea_local/
