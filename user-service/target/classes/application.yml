@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: user-service
+  main:
+    cloud-platform: "KUBERNETES"
 
 springdoc:
   api-docs:

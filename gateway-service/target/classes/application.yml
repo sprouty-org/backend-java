@@ -3,6 +3,8 @@ server:
 spring:
   application:
     name: gateway-service
+  main:
+    cloud-platform: "KUBERNETES"
   cloud:
     gateway:
       routes:
@@ -50,6 +52,7 @@ jwt:
 management:
   endpoints:
     web:
+      base-path: /actuator
       exposure:
         include: "health,info,prometheus"
   endpoint:
