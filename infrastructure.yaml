@@ -21,15 +21,15 @@ spec:
             - containerPort: 8081
           readinessProbe:
             httpGet:
-              path: /actuator/health/readiness
+              path: /actuator/health
               port: 8081
-            initialDelaySeconds: 20
+            initialDelaySeconds: 45
             periodSeconds: 10
           livenessProbe:
             httpGet:
-              path: /actuator/health/liveness
+              path: /actuator/health
               port: 8081
-            initialDelaySeconds: 30
+            initialDelaySeconds: 60
             periodSeconds: 20
           env:
             - name: JWT_SECRET
