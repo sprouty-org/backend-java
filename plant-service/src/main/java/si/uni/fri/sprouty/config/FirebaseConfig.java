@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
@@ -17,6 +18,7 @@ import java.io.IOException;
 
 @Slf4j
 @Configuration
+@Profile("!test")
 public class FirebaseConfig {
 
     @Value("${firebase.storage-bucket:sprouty-plantapp.firebasestorage.app}")

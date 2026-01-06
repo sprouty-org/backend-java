@@ -8,9 +8,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class FirebaseAuthService {
 
+    private final FirebaseAuth firebaseAuth;
+
+    // Spring injects the bean here
+    public FirebaseAuthService(FirebaseAuth firebaseAuth) {
+        this.firebaseAuth = firebaseAuth;
+    }
+
     public String verifyFirebaseToken(String idToken) throws Exception {
         try {
-            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+            FirebaseToken decodedToken = firebaseAuth.verifyIdToken(idToken);
             return decodedToken.getUid();
         } catch (FirebaseAuthException e) {
             System.err.println("Firebase Token verification failed: " + e.getMessage());

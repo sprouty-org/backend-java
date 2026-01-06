@@ -32,16 +32,20 @@ public class AuthController {
 
     private final FirebaseAuthService firebaseAuthService;
     private final FirestoreService firestoreService;
-    private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    private final FirebaseAuth firebaseAuth;
     private final org.springframework.web.reactive.function.client.WebClient.Builder webClientBuilder;
 
     @Value("${jwt.secret}")
     private String secretKey;
 
-    public AuthController(FirebaseAuthService firebaseAuthService, FirestoreService firestoreService, WebClient.Builder wcb) {
+    public AuthController(FirebaseAuthService firebaseAuthService,
+                          FirestoreService firestoreService,
+                          FirebaseAuth firebaseAuth,
+                          WebClient.Builder wcb) {
         this.firebaseAuthService = firebaseAuthService;
         this.firestoreService = firestoreService;
         this.webClientBuilder = wcb;
+        this.firebaseAuth = firebaseAuth;
     }
 
     @Operation(summary = "Register with Email/Password")

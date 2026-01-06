@@ -1,8 +1,6 @@
 package si.uni.fri.sprouty.service;
 
 import com.google.cloud.firestore.*;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.cloud.StorageClient;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Blob;
@@ -21,19 +19,18 @@ import java.util.concurrent.TimeUnit;
 public class SensorService {
 
     private final RestTemplate restTemplate;
+    private final Firestore db;
+    private final StorageClient storage;
     private final String NOTIFICATION_SERVICE_URL = "http://notification-service/notifications/send";
 
-    public SensorService(RestTemplate restTemplate) {
+    public SensorService(RestTemplate restTemplate, Firestore db, StorageClient storage) {
         this.restTemplate = restTemplate;
-    }
-
-    private Firestore getDb() {
-        return FirestoreClient.getFirestore(FirebaseApp.getInstance(), "sprouty-firestore");
+        this.db = db;
+        this.storage = storage;
     }
 
     public void processSensorUpdate(String macAddress, double temp, double humAir, double humSoil) {
         try {
-            Firestore db = getDb();
             QuerySnapshot qs = db.collection("user_plants").whereEqualTo("connectedSensorId", macAddress).get().get();
 
             if (qs.isEmpty()) return;
@@ -81,7 +78,7 @@ public class SensorService {
     public String uploadSensorImage(byte[] imageBytes, String mac) {
         try {
             String bucketName = "sprouty-plantapp.firebasestorage.app";
-            Bucket bucket = StorageClient.getInstance().bucket(bucketName);
+            Bucket bucket = storage.bucket(bucketName);
 
             String fileName = String.format("sensors/%s/%d.jpg", mac, System.currentTimeMillis());
 
@@ -199,7 +196,6 @@ public class SensorService {
     }
 
     private void recordHistoryAndCleanup(String plantId, double temp, double humAir, double humSoil) {
-        Firestore db = getDb();
         long now = System.currentTimeMillis();
         Map<String, Object> log = new HashMap<>();
         log.put("plantId", plantId);

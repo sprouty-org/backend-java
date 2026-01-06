@@ -48,8 +48,9 @@ jobs:
           cache: 'maven'
 
       - name: Build JAR with Maven
-        # -pl specifies the project, -am builds dependencies (like a shared common module)
-        run: mvn clean package -pl ${{ matrix.service }} -am -DskipTests
+        run: mvn clean package -pl ${{ matrix.service }} -am
+        env:
+          JWT_SECRET: "test-secret-key-at-least-32-characters-long"
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2

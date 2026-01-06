@@ -2,28 +2,24 @@ package si.uni.fri.sprouty.service;
 
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import si.uni.fri.sprouty.dto.NotificationRequest;
 
 @Service
-@RequiredArgsConstructor
 public class FcmService {
 
     private final FirebaseMessaging fcm;
-    private static final String FIRESTORE_DB_NAME = "sprouty-firestore";
+    private final Firestore db;
 
-    private Firestore getDb() {
-        return FirestoreClient.getFirestore(FirebaseApp.getInstance(), FIRESTORE_DB_NAME);
+    public FcmService(FirebaseMessaging fcm, Firestore db) {
+        this.fcm = fcm;
+        this.db = db;
     }
 
     public void sendPush(NotificationRequest request) {
-        Firestore db = getDb();
         try {
             DocumentSnapshot userDoc = db.collection("users")
                     .document(request.getUserId())

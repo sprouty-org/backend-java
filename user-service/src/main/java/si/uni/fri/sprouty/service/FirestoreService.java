@@ -2,8 +2,6 @@ package si.uni.fri.sprouty.service;
 
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.stereotype.Service;
 import si.uni.fri.sprouty.dto.User;
 
@@ -13,15 +11,14 @@ import java.util.Map;
 @Service
 public class FirestoreService {
 
-    private static final String FIRESTORE_DB_NAME = "sprouty-firestore";
     private final String USERS_COLLECTION = "users";
+    private final Firestore db;
 
-    private Firestore getDb() {
-        return FirestoreClient.getFirestore(FirebaseApp.getInstance(), FIRESTORE_DB_NAME);
+    public FirestoreService(Firestore db) {
+        this.db = db;
     }
 
     public void saveUser(User user) throws Exception {
-        Firestore db = getDb();
         DocumentReference docRef = db.collection(USERS_COLLECTION).document(user.getUid());
 
         if (!docRef.get().get().exists()) {
@@ -37,7 +34,6 @@ public class FirestoreService {
         if (fcmToken == null || fcmToken.isEmpty()) return;
 
         try {
-            Firestore db = getDb();
             DocumentReference docRef = db.collection(USERS_COLLECTION).document(uid);
 
             Map<String, Object> updates = new HashMap<>();
@@ -50,7 +46,6 @@ public class FirestoreService {
     }
 
     public void deleteUserRecord(String uid) throws Exception {
-        Firestore db = getDb();
         db.collection(USERS_COLLECTION).document(uid).delete().get();
     }
 }

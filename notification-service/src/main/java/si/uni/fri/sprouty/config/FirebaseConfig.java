@@ -10,12 +10,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 
 @Slf4j
 @Configuration
+@Profile("!test")
 public class FirebaseConfig {
 
     @PostConstruct
@@ -38,7 +40,7 @@ public class FirebaseConfig {
     @Bean
     @Primary
     public Firestore getFirestore() {
-        return FirestoreClient.getFirestore();
+        return FirestoreClient.getFirestore(FirebaseApp.getInstance(), "sprouty-firestore");
     }
 
     @Bean
