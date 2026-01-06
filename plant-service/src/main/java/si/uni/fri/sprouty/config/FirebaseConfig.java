@@ -43,7 +43,7 @@ public class FirebaseConfig {
     @Bean
     @Primary
     public Firestore getFirestore() {
-        return FirestoreClient.getFirestore();
+        return FirestoreClient.getFirestore(FirebaseApp.getInstance(), "sprouty-firestore");
     }
 
 

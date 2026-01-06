@@ -33,7 +33,7 @@ import java.util.Map;
 public class PlantService {
     private final Firestore db;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
 
     @Value("${openai.api.key}")
     private String openAiKey;
@@ -41,8 +41,9 @@ public class PlantService {
     @Value("${plantnet.api.key}")
     private String plantNetKey;
 
-    public PlantService() {
-        this.db = FirestoreClient.getFirestore(FirebaseApp.getInstance(), "sprouty-firestore");
+    public PlantService(Firestore db, RestTemplate restTemplate) {
+        this.db = db;
+        this.restTemplate = restTemplate;
     }
 
 
