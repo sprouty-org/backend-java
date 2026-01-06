@@ -26,7 +26,8 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
             "/actuator",
             "/users/actuator",        // Add this
             "/plants/actuator",       // Add this
-            "/sensors/actuator",      // Add this
+            "/sensors/actuator",
+            // Add this
             "/notifications/actuator", // Add this
             "/users/login",
             "/users/register",
