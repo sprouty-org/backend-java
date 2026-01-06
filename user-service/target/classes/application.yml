@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: user-service
+  main:
+    cloud-platform: "KUBERNETES"
 
 springdoc:
   api-docs:
@@ -35,6 +37,7 @@ logging:
 management:
   endpoints:
     web:
+      base-path: /actuator
       exposure:
         include: "health,info,prometheus"
   endpoint:

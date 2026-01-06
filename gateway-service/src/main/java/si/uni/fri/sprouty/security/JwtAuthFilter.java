@@ -36,7 +36,12 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
             "/users/v3/api-docs",
             "/plants/v3/api-docs",
             "/sensors/v3/api-docs",
-            "/notifications/v3/api-docs"
+            "/notifications/v3/api-docs",
+            "/health",
+            "/notifications/health",
+            "/sensors/health",
+            "/users/health",
+            "/plants/health"
     );
 
     @Value("${jwt.secret:}")

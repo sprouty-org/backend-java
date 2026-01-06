@@ -161,4 +161,9 @@ public class AuthController {
                 .signWith(key, Jwts.SIG.HS256)
                 .compact();
     }
+
+    @GetMapping("/health")
+    public ResponseEntity<String> healthCheck() {
+        return ResponseEntity.ok("UP");
+    }
 }
