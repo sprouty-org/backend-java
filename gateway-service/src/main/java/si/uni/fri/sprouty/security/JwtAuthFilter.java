@@ -26,7 +26,6 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
             "/users/login",
             "/users/register",
             "/sensors",
-            "/actuator/health",      // Added for GKE probes
             "/swagger-ui",           // Basic check
             "/v3/api-docs",          // Basic check
             "/users/swagger-ui",     // Added for Gateway routing
@@ -36,12 +35,7 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
             "/users/v3/api-docs",
             "/plants/v3/api-docs",
             "/sensors/v3/api-docs",
-            "/notifications/v3/api-docs",
-            "/health",
-            "/notifications/health",
-            "/sensors/health",
-            "/users/health",
-            "/plants/health"
+            "/notifications/v3/api-docs"
     );
 
     @Value("${jwt.secret:}")
