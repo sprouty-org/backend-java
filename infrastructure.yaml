@@ -1,4 +1,4 @@
-# --- USER SERVICE ---
+# --- COMMON CONFIG: USER SERVICE ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,22 +15,21 @@ spec:
     spec:
       containers:
         - name: user-service
-          image: user-service:latest
-          imagePullPolicy: Never
+          image: europe-west4-docker.pkg.dev/sprouty-plantapp/sprouty-repo/user-service:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8081
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
               port: 8081
             initialDelaySeconds: 20
-            periodSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /actuator/health/liveness
-              port: 8081
-            initialDelaySeconds: 30
-            periodSeconds: 20
           env:
             - name: JWT_SECRET
               valueFrom: { secretKeyRef: { name: app-secrets, key: jwt-secret } }
@@ -53,7 +52,7 @@ spec:
   ports: [{ port: 80, targetPort: 8081 }]
 
 ---
-# --- PLANT SERVICE ---
+# --- COMMON CONFIG: PLANT SERVICE ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -69,21 +68,20 @@ spec:
     spec:
       containers:
         - name: plant-service
-          image: plant-service:latest
-          imagePullPolicy: Never
+          image: europe-west4-docker.pkg.dev/sprouty-plantapp/sprouty-repo/plant-service:latest
+          imagePullPolicy: IfNotPresent
           ports: [{ containerPort: 8082 }]
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
               port: 8082
             initialDelaySeconds: 20
-            periodSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /actuator/health/liveness
-              port: 8082
-            initialDelaySeconds: 30
-            periodSeconds: 20
           env:
             - name: GOOGLE_APPLICATION_CREDENTIALS
               value: /app/firebase-key.json
@@ -108,7 +106,7 @@ spec:
   ports: [{ port: 80, targetPort: 8082 }]
 
 ---
-# --- SENSOR SERVICE ---
+# --- COMMON CONFIG: SENSOR SERVICE ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -124,21 +122,20 @@ spec:
     spec:
       containers:
         - name: sensor-service
-          image: sensor-service:latest
-          imagePullPolicy: Never
+          image: europe-west4-docker.pkg.dev/sprouty-plantapp/sprouty-repo/sensor-service:latest
+          imagePullPolicy: IfNotPresent
           ports: [{ containerPort: 8083 }]
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
               port: 8083
             initialDelaySeconds: 20
-            periodSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /actuator/health/liveness
-              port: 8083
-            initialDelaySeconds: 30
-            periodSeconds: 20
           env:
             - name: GOOGLE_APPLICATION_CREDENTIALS
               value: /app/firebase-key.json
@@ -159,7 +156,7 @@ spec:
   ports: [{ port: 80, targetPort: 8083 }]
 
 ---
-# --- NOTIFICATION SERVICE ---
+# --- COMMON CONFIG: NOTIFICATION SERVICE ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -175,21 +172,20 @@ spec:
     spec:
       containers:
         - name: notification-service
-          image: notification-service:latest
-          imagePullPolicy: Never
+          image: europe-west4-docker.pkg.dev/sprouty-plantapp/sprouty-repo/notification-service:latest
+          imagePullPolicy: IfNotPresent
           ports: [{ containerPort: 8084 }]
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
               port: 8084
             initialDelaySeconds: 20
-            periodSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /actuator/health/liveness
-              port: 8084
-            initialDelaySeconds: 30
-            periodSeconds: 20
           env:
             - name: GOOGLE_APPLICATION_CREDENTIALS
               value: /app/firebase-key.json
@@ -210,7 +206,7 @@ spec:
   ports: [{ port: 80, targetPort: 8084 }]
 
 ---
-# --- GATEWAY SERVICE ---
+# --- GATEWAY SERVICE (PUBLIC FACING) ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -225,21 +221,15 @@ spec:
     spec:
       containers:
         - name: gateway-service
-          image: gateway-service:v6
-          imagePullPolicy: Never
+          image: europe-west4-docker.pkg.dev/sprouty-plantapp/sprouty-repo/gateway-service:latest
+          imagePullPolicy: IfNotPresent
           ports: [{ containerPort: 8080 }]
-          readinessProbe:
-            httpGet:
-              path: /actuator/health/readiness
-              port: 8080
-            initialDelaySeconds: 15
-            periodSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /actuator/health/liveness
-              port: 8080
-            initialDelaySeconds: 20
-            periodSeconds: 20
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
           env:
             - name: JWT_SECRET
               valueFrom: { secretKeyRef: { name: app-secrets, key: jwt-secret } }
@@ -249,9 +239,8 @@ kind: Service
 metadata:
   name: gateway-service
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector: { app: gateway-service }
   ports:
-    - port: 8080
+    - port: 80
       targetPort: 8080
-      nodePort: 30080

@@ -17,9 +17,10 @@ logbook:
     style: http
   filter:
     enabled: true
-  exclude:
-    - /actuator/**
-    - /favicon.ico
+  predicate:
+    exclude:
+      - path: /actuator/**
+      - path: /favicon.ico
 
 logging:
   level:

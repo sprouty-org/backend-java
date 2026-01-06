@@ -26,8 +26,13 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
             "/users/login",
             "/users/register",
             "/sensors",
-            "/swagger-ui",
-            "/v3/api-docs",
+            "/actuator/health",      // Added for GKE probes
+            "/swagger-ui",           // Basic check
+            "/v3/api-docs",          // Basic check
+            "/users/swagger-ui",     // Added for Gateway routing
+            "/plants/swagger-ui",    // Added for Gateway routing
+            "/sensors/swagger-ui",   // Added for Gateway routing
+            "/notifications/swagger-ui",
             "/users/v3/api-docs",
             "/plants/v3/api-docs",
             "/sensors/v3/api-docs",
