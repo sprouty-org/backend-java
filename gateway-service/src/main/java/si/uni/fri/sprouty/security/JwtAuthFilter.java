@@ -24,6 +24,10 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
     // Public endpoints that dont require authentication
     private final List<String> publicEndpoints = List.of(
             "/actuator",
+            "/users/actuator",        // Add this
+            "/plants/actuator",       // Add this
+            "/sensors/actuator",      // Add this
+            "/notifications/actuator", // Add this
             "/users/login",
             "/users/register",
             "/sensors",

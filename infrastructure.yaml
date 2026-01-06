@@ -25,6 +25,10 @@ spec:
               cpu: "250m"
             limits:
               memory: "1Gi"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8081
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
@@ -77,6 +81,10 @@ spec:
               cpu: "250m"
             limits:
               memory: "1Gi"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8082
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
@@ -131,6 +139,10 @@ spec:
               cpu: "250m"
             limits:
               memory: "1Gi"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8083
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
@@ -181,6 +193,10 @@ spec:
               cpu: "250m"
             limits:
               memory: "1Gi"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8084
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
