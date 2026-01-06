@@ -41,7 +41,7 @@ logging:
 management:
   endpoints:
     web:
-      base-path: /plants/actuator
+      base-path: /actuator
       exposure:
         include: "health,info,prometheus"
   endpoint:
