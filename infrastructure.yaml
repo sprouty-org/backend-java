@@ -29,11 +29,14 @@ spec:
             httpGet:
               path: /actuator/health/liveness
               port: 8081
+            initialDelaySeconds: 60  # Increased from 30 to 60
+            periodSeconds: 15
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
               port: 8081
-            initialDelaySeconds: 20
+            initialDelaySeconds: 45  # Increased from 30 to 60
+            periodSeconds: 10
           env:
             - name: JWT_SECRET
               valueFrom: { secretKeyRef: { name: app-secrets, key: jwt-secret } }
@@ -85,11 +88,14 @@ spec:
             httpGet:
               path: /actuator/health/liveness
               port: 8082
+            initialDelaySeconds: 60  # Increased from 30 to 60
+            periodSeconds: 15
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
               port: 8082
-            initialDelaySeconds: 20
+            initialDelaySeconds: 45  # Increased from 30 to 60
+            periodSeconds: 10
           env:
             - name: GOOGLE_APPLICATION_CREDENTIALS
               value: /app/firebase-key.json
@@ -143,11 +149,14 @@ spec:
             httpGet:
               path: /actuator/health/liveness
               port: 8083
+            initialDelaySeconds: 60  # Increased from 30 to 60
+            periodSeconds: 15
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
               port: 8083
-            initialDelaySeconds: 20
+            initialDelaySeconds: 45  # Increased from 30 to 60
+            periodSeconds: 10
           env:
             - name: GOOGLE_APPLICATION_CREDENTIALS
               value: /app/firebase-key.json
@@ -197,11 +206,14 @@ spec:
             httpGet:
               path: /actuator/health/liveness
               port: 8084
+            initialDelaySeconds: 60  # Increased from 30 to 60
+            periodSeconds: 15
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
               port: 8084
-            initialDelaySeconds: 20
+            initialDelaySeconds: 45  # Increased from 30 to 60
+            periodSeconds: 10
           env:
             - name: GOOGLE_APPLICATION_CREDENTIALS
               value: /app/firebase-key.json
