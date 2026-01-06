@@ -27,13 +27,13 @@ spec:
               memory: "1Gi"
           livenessProbe:
             httpGet:
-              path: /actuator/health/liveness
+              path: /users/actuator/health/liveness
               port: 8081
             initialDelaySeconds: 60  # Increased from 30 to 60
             periodSeconds: 15
           readinessProbe:
             httpGet:
-              path: /actuator/health/readiness
+              path: /users/actuator/health/readiness
               port: 8081
             initialDelaySeconds: 45  # Increased from 30 to 60
             periodSeconds: 10
@@ -86,13 +86,13 @@ spec:
               memory: "1Gi"
           livenessProbe:
             httpGet:
-              path: /actuator/health/liveness
+              path: /plants/actuator/health/liveness
               port: 8082
             initialDelaySeconds: 60  # Increased from 30 to 60
             periodSeconds: 15
           readinessProbe:
             httpGet:
-              path: /actuator/health/readiness
+              path: /plants/actuator/health/readiness
               port: 8082
             initialDelaySeconds: 45  # Increased from 30 to 60
             periodSeconds: 10
@@ -147,13 +147,13 @@ spec:
               memory: "1Gi"
           livenessProbe:
             httpGet:
-              path: /actuator/health/liveness
+              path: /sensors/actuator/health/liveness
               port: 8083
             initialDelaySeconds: 60  # Increased from 30 to 60
             periodSeconds: 15
           readinessProbe:
             httpGet:
-              path: /actuator/health/readiness
+              path: /sensors/actuator/health/readiness
               port: 8083
             initialDelaySeconds: 45  # Increased from 30 to 60
             periodSeconds: 10
@@ -204,13 +204,13 @@ spec:
               memory: "1Gi"
           livenessProbe:
             httpGet:
-              path: /actuator/health/liveness
+              path: /notifications/actuator/health/liveness
               port: 8084
             initialDelaySeconds: 60  # Increased from 30 to 60
             periodSeconds: 15
           readinessProbe:
             httpGet:
-              path: /actuator/health/readiness
+              path: /notifications/actuator/health/readiness
               port: 8084
             initialDelaySeconds: 45  # Increased from 30 to 60
             periodSeconds: 10
