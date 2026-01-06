@@ -27,7 +27,7 @@ import java.util.Date;
 
 @RestController
 @RequestMapping("/users")
-@Tag(name = "Authentication", description = "Endpoints for user registration, login, and account lifecycle management.")
+@Tag(name = "Authentication", description = "Endpoints for user registration, login, and account management.")
 public class AuthController {
 
     private final FirebaseAuthService firebaseAuthService;

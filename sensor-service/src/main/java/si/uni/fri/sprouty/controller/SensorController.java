@@ -76,8 +76,4 @@ public class SensorController {
             return ResponseEntity.internalServerError().body("System error: " + e.getMessage());
         }
     }
-    @GetMapping("/health")
-    public ResponseEntity<String> healthCheck() {
-        return ResponseEntity.ok("UP");
-    }
 }

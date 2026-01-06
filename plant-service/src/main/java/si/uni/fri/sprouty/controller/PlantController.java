@@ -226,8 +226,4 @@ public class PlantController {
             return ResponseEntity.status(500).body("Error cleaning up user plants: " + e.getMessage());
         }
     }
-    @GetMapping("/health")
-    public ResponseEntity<String> healthCheck() {
-        return ResponseEntity.ok("UP");
-    }
 }

@@ -35,8 +35,4 @@ public class NotificationController {
             return ResponseEntity.internalServerError().body("Failed: " + e.getMessage());
         }
     }
-    @GetMapping("/health")
-    public ResponseEntity<String> healthCheck() {
-        return ResponseEntity.ok("UP");
-    }
 }
