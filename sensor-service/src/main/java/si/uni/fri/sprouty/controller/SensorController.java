@@ -16,7 +16,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/sensors")
-@Tag(name = "Sensor Integration", description = "Endpoints used by physical hardware to transmit environmental data and images.")
+@Tag(name = "Sensor Integration", description = "Endpoints for IoT hardware (ESP32/ESP32-CAM) to transmit plant vitals.")
 public class SensorController {
 
     private final SensorService sensorService;
@@ -26,13 +26,15 @@ public class SensorController {
     }
 
     @Operation(
-            summary = "Receive Sensor Data",
-            description = "Standard endpoint for ESP32/IoT devices to send moisture, temperature, and air humidity. Triggers health calculations and silent UI sync."
+            summary = "Ingest Environmental Telemetry",
+            description = "Receives temperature, air humidity, and soil moisture from a physical sensor. " +
+                    "Calculates plant health based on master species thresholds and triggers alerts if necessary."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully processed sensor data"),
-            @ApiResponse(responseCode = "400", description = "Validation failed - check field constraints"),
-            @ApiResponse(responseCode = "500", description = "Internal service error during processing")
+            @ApiResponse(responseCode = "200", description = "Data point recorded and health status updated"),
+            @ApiResponse(responseCode = "400", description = "Invalid payload (e.g. moisture out of 0-100 range)"),
+            @ApiResponse(responseCode = "404", description = "No UserPlant found associated with this sensor ID"),
+            @ApiResponse(responseCode = "500", description = "Firestore or Notification Service connectivity error")
     })
     @PostMapping(value = "/data", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> receiveSensorData(@Valid @RequestBody SensorDataRequest request) {
@@ -46,13 +48,14 @@ public class SensorController {
     }
 
     @Operation(
-            summary = "Upload Sensor Image",
-            description = "Processes JPEG stream from ESP32-CAM and uploads to Firebase Storage."
+            summary = "Upload Plant Snapshot",
+            description = "Uploads binary image data (JPEG) to Firebase Storage. " +
+                    "The image is stored in a structured path: `sensors/{mac}/{timestamp}.jpg`."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Image successfully stored in Firebase"),
-            @ApiResponse(responseCode = "400", description = "Multipart file is missing or empty"),
-            @ApiResponse(responseCode = "500", description = "Storage upload failure or IO processing error")
+            @ApiResponse(responseCode = "200", description = "Image uploaded successfully. Returns the public signed URL."),
+            @ApiResponse(responseCode = "400", description = "Missing multipart image file"),
+            @ApiResponse(responseCode = "500", description = "Cloud Storage upload failed")
     })
     @PostMapping(value = "/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadImage(@ModelAttribute ImageUploadRequest request) {

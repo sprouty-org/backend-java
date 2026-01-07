@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Standardized error response for all Sprouty microservices")
 public record ErrorResponse(
-        @Schema(example = "User with this email already exists", description = "Human-readable error message")
+        @Schema(example = "Error message", description = "Human-readable error message")
         String message,
 
         @Schema(example = "1704660000000", description = "Epoch timestamp of the error")

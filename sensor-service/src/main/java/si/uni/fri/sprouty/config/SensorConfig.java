@@ -15,7 +15,7 @@ import java.io.IOException;
 
 @Configuration
 @Profile("!test")
-public class FirebaseConfig {
+public class SensorConfig {
 
     @PostConstruct
     public void init() throws IOException {

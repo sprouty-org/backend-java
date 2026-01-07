@@ -14,7 +14,7 @@ public class UserPlant {
     @Schema(description = "Owner Firebase UID")
     private String ownerId;
 
-    @Schema(description = "Reference to the AI-generated species data")
+    @Schema(description = "Reference to the OpenAI-generated species data")
     private String speciesId;
 
     @Schema(example = "Monstera")
@@ -32,13 +32,13 @@ public class UserPlant {
     @Schema(description = "User-adjusted watering frequency (days)", example = "7")
     private int targetWateringInterval;
 
-    @Schema(description = "Calculated health based on sensor data vs AI thresholds", example = "Thirsty")
+    @Schema(description = "Current health status of the plant", example = "Thirsty")
     private String healthStatus;
 
-    @Schema(description = "Last time the ESP32 checked in")
+    @Schema(description = "Last time the ESP32 sensor checked in")
     private long lastSeen;
 
-    @Schema(description = "MAC address of the ESP32-S3/CAM")
+    @Schema(description = "MAC address of the ESP32-S3/CAM, used as unique sensor ID, without :", example = "246F28AABBCC")
     private String connectedSensorId;
 
     @Schema(description = "Active push notification status")

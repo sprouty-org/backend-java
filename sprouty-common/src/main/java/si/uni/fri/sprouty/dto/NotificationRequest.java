@@ -11,7 +11,7 @@ import java.util.Map;
 @Schema(description = "Request object for sending push notifications or triggering silent background syncs.")
 public class NotificationRequest {
 
-    @Schema(description = "The unique Firebase UID of the target user.", example = "GuTOgdV82ZhQOqYVM1Thsoz8LvZ2")
+    @Schema(description = "Firebase UID of the target user.", example = "GuTOgdV82ZhQOqYVM1Thsoz8LvZ2")
     private String userId;
 
     @Schema(description = "The title of the notification popup.", example = "Water Me!")

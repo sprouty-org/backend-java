@@ -16,6 +16,6 @@ public class EmailRegisterRequest {
     @Schema(example = "Sprouty Tester", description = "Name shown in app")
     private String displayName;
 
-    @Schema(example = "f2MfaEsMQEaKK2Y3LZnQ3q:APA91bGGGyDCvMxkpfZ1GKupee5bpM9RLvsPlFzC9MyehZXr_v8Z5NAer9cJzvn_XPKZgxjjMHrWmEGK0Qez0rq1HPOwd1xL7IwnApE4zlasC8zXHg975T0", description = "Your device FCM token")
+    @Schema(example = "test_fcm_token", description = "Your device FCM token")
     private String fcmToken;
 }

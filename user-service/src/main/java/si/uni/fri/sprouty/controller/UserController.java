@@ -28,10 +28,8 @@ public class UserController {
 
     @Operation(summary = "Register with Email/Password")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Registration successful",
-                    content = @Content(schema = @Schema(implementation = AuthResponse.class))),
-            @ApiResponse(responseCode = "500", description = "Registration failed",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "Registration successful", content = @Content(schema = @Schema(implementation = AuthResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Registration failed", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AuthResponse> registerUser(@RequestBody EmailRegisterRequest request) throws Exception {
@@ -40,10 +38,8 @@ public class UserController {
 
     @Operation(summary = "Register with Google", description = "Verifies a Google ID token and creates a first-time account.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Sign in successful",
-                    content = @Content(schema = @Schema(implementation = AuthResponse.class))),
-            @ApiResponse(responseCode = "401", description = "Invalid credentials",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "Sign in successful", content = @Content(schema = @Schema(implementation = AuthResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Invalid credentials", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping(value = "/register/google", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AuthResponse> exchangeGoogleRegisterToken(@RequestBody RegisterRequest request) throws Exception {
@@ -52,10 +48,8 @@ public class UserController {
 
     @Operation(summary = "Login (Email or Google)", description = "Validates Firebase ID token and issues an internal JWT.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Login successful",
-                    content = @Content(schema = @Schema(implementation = AuthResponse.class))),
-            @ApiResponse(responseCode = "401", description = "Invalid credentials",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "Login successful", content = @Content(schema = @Schema(implementation = AuthResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Invalid credentials", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping(value = {"/login/google", "/login/email"}, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) throws Exception {
@@ -65,8 +59,8 @@ public class UserController {
     @Operation(summary = "Delete Account", description = "Triggers cascading deletion: calls Plant Service to remove plants, then cleans up User records.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Account fully deleted"),
-            @ApiResponse(responseCode = "500", description = "Partial deletion error",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Partial deletion error", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/me")
