@@ -8,9 +8,9 @@ spring:
 
 springdoc:
   api-docs:
-    path: /v3/api-docs
+    path: /plants/v3/api-docs
   swagger-ui:
-    path: /swagger-ui.html
+    path: /plants/swagger-ui.html
     operations-sorter: alpha
 
 openai:
