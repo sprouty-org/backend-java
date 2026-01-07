@@ -9,7 +9,7 @@ springdoc:
   api-docs:
     path: /v3/api-docs
   swagger-ui:
-    use-root-path: true
+    path: /swagger-ui.html
 
 
 logbook:
