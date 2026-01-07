@@ -14,7 +14,7 @@
     </dependency>
     <dependency>
         <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-webflux</artifactId> </dependency>
+        <artifactId>spring-boot-starter-web</artifactId> </dependency>
 
     <dependency>
         <groupId>org.zalando</groupId>
@@ -26,7 +26,7 @@
     </dependency>
     <dependency>
         <groupId>org.springdoc</groupId>
-        <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
+        <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
     </dependency>
     <dependency>
         <groupId>com.google.firebase</groupId>

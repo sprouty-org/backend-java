@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestTemplate;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -20,7 +20,7 @@ class UserServiceApplicationTests {
     private Firestore firestore;
 
     @MockBean
-    private WebClient.Builder webClientBuilder;
+    private RestTemplate restTemplate;
 
     @Test
     void contextLoads() {

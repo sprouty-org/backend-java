@@ -1,5 +1,6 @@
 server:
   port: 8082
+  forward-headers-strategy: framework
 
 spring:
   application:
@@ -9,7 +10,8 @@ springdoc:
   api-docs:
     path: /v3/api-docs
   swagger-ui:
-    use-root-path: true
+    path: /swagger-ui.html
+    operations-sorter: alpha
 
 openai:
   api:

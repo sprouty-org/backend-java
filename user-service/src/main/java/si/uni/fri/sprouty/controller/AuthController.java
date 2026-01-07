@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestTemplate;
 import si.uni.fri.sprouty.dto.*;
 import si.uni.fri.sprouty.service.FirebaseAuthService;
 import si.uni.fri.sprouty.service.FirestoreService;
@@ -33,7 +33,7 @@ public class AuthController {
     private final FirebaseAuthService firebaseAuthService;
     private final FirestoreService firestoreService;
     private final FirebaseAuth firebaseAuth;
-    private final org.springframework.web.reactive.function.client.WebClient.Builder webClientBuilder;
+    private final RestTemplate restTemplate;
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -41,10 +41,10 @@ public class AuthController {
     public AuthController(FirebaseAuthService firebaseAuthService,
                           FirestoreService firestoreService,
                           FirebaseAuth firebaseAuth,
-                          WebClient.Builder wcb) {
+                          RestTemplate restTemplate) {
         this.firebaseAuthService = firebaseAuthService;
         this.firestoreService = firestoreService;
-        this.webClientBuilder = wcb;
+        this.restTemplate = restTemplate;
         this.firebaseAuth = firebaseAuth;
     }
 
@@ -134,17 +134,8 @@ public class AuthController {
     public ResponseEntity<?> deleteAccount(
             @Parameter(description = "UID extracted from JWT by the Gateway (you should use the FirebaseUid you got from the register here)") @RequestHeader("X-User-Id") String uid) {
         try {
-            webClientBuilder.build()
-                    .delete()
-                    .uri(uriBuilder -> uriBuilder
-                            .scheme("http")
-                            .host("plant-service")
-                            .path("/plants/internal/user")
-                            .queryParam("uid", uid)
-                            .build())
-                    .retrieve()
-                    .toBodilessEntity()
-                    .block();
+            String url = "http://plant-service/plants/internal/user?uid=" + uid;
+            restTemplate.delete(url);
 
             firestoreService.deleteUserRecord(uid);
             firebaseAuth.deleteUser(uid);

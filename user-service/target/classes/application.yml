@@ -1,5 +1,6 @@
 server:
   port: 8081
+  forward-headers-strategy: framework
 
 spring:
   application:
@@ -11,7 +12,8 @@ springdoc:
   api-docs:
     path: /v3/api-docs
   swagger-ui:
-    use-root-path: true
+    path: /swagger-ui.html
+    operations-sorter: alpha
 
 jwt:
   secret: ${JWT_SECRET:?JWT secret is missing}
