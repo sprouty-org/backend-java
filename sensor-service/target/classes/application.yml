@@ -8,9 +8,9 @@ spring:
 
 springdoc:
   api-docs:
-    path: /v3/api-docs
+    path: /sensors/v3/api-docs
   swagger-ui:
-    path: /swagger-ui.html
+    path: /sensors/swagger-ui.html
     operations-sorter: alpha
 
 

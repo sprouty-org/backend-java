@@ -1,10 +1,9 @@
-C:\Users\dadii\IdeaProjects\Sprouty\user-service\src\main\java\si\uni\fri\sprouty\config\FirebaseConfig.java
 C:\Users\dadii\IdeaProjects\Sprouty\user-service\src\main\java\si\uni\fri\sprouty\config\OpenApiConfig.java
-C:\Users\dadii\IdeaProjects\Sprouty\user-service\src\main\java\si\uni\fri\sprouty\controller\AuthController.java
+C:\Users\dadii\IdeaProjects\Sprouty\user-service\src\main\java\si\uni\fri\sprouty\config\UserConfig.java
+C:\Users\dadii\IdeaProjects\Sprouty\user-service\src\main\java\si\uni\fri\sprouty\controller\UserController.java
 C:\Users\dadii\IdeaProjects\Sprouty\user-service\src\main\java\si\uni\fri\sprouty\dto\AuthResponse.java
 C:\Users\dadii\IdeaProjects\Sprouty\user-service\src\main\java\si\uni\fri\sprouty\dto\EmailRegisterRequest.java
 C:\Users\dadii\IdeaProjects\Sprouty\user-service\src\main\java\si\uni\fri\sprouty\dto\LoginRequest.java
 C:\Users\dadii\IdeaProjects\Sprouty\user-service\src\main\java\si\uni\fri\sprouty\dto\RegisterRequest.java
-C:\Users\dadii\IdeaProjects\Sprouty\user-service\src\main\java\si\uni\fri\sprouty\service\FirebaseAuthService.java
-C:\Users\dadii\IdeaProjects\Sprouty\user-service\src\main\java\si\uni\fri\sprouty\service\FirestoreService.java
+C:\Users\dadii\IdeaProjects\Sprouty\user-service\src\main\java\si\uni\fri\sprouty\service\UserService.java
 C:\Users\dadii\IdeaProjects\Sprouty\user-service\src\main\java\si\uni\fri\sprouty\UserServiceApplication.java
