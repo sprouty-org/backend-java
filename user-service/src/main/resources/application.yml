@@ -9,9 +9,9 @@ spring:
 
 springdoc:
   api-docs:
-    path: /v3/api-docs
+    path: /users/v3/api-docs
   swagger-ui:
-    path: /swagger-ui.html
+    path: /users/swagger-ui.html
     operations-sorter: alpha
 
 jwt:
