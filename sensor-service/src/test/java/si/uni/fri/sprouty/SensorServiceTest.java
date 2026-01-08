@@ -56,7 +56,7 @@ class SensorServiceTest {
         UserPlant plant = new UserPlant();
         plant.setSpeciesId("basil_01");
         plant.setOwnerId("user123");
-        plant.setHealthStatus("Healthy"); // Set initial status
+        plant.setHealthStatus("Healthy");
         when(documentSnapshot.toObject(UserPlant.class)).thenReturn(plant);
         when(documentSnapshot.getReference()).thenReturn(plantDocRef);
         when(documentSnapshot.getId()).thenReturn("plant_doc_id");
@@ -77,22 +77,16 @@ class SensorServiceTest {
         when(db.collection("sensor_history")).thenReturn(historyCollection);
         when(historyCollection.add(anyMap())).thenReturn(ApiFutures.immediateFuture(null));
 
-        // Act
-        sensorService.processSensorUpdate(mac, 22.0, 50.0, 45.0);
 
-        // Assert 1: Verify the plant vitals were updated
+        sensorService.processSensorUpdate(mac, 22.0, 50.0, 45.0);
         verify(plantDocRef).update(argThat(map ->
                 map.get("healthStatus").equals("Healthy") &&
                         map.get("currentTemperature").equals(22.0)
         ));
-
-        // Assert 2: Verify history was recorded
         verify(historyCollection).add(argThat(map ->
                 map.get("plantId").equals("plant_doc_id") &&
                         map.get("temperature").equals(22.0)
         ));
-
-        // Assert 3: Verify the silent sync was triggered via RestTemplate
         verify(restTemplate, atLeastOnce()).postForEntity(anyString(), any(), eq(String.class));
     }
 }

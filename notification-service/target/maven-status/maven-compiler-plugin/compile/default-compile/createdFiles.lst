@@ -1,5 +1,5 @@
 si\uni\fri\sprouty\controller\NotificationController.class
-si\uni\fri\sprouty\config\FirebaseConfig.class
+si\uni\fri\sprouty\config\NotificationConfig.class
 si\uni\fri\sprouty\NotificationServiceApplication.class
+si\uni\fri\sprouty\service\NotificationService.class
 si\uni\fri\sprouty\config\OpenApiConfig.class
-si\uni\fri\sprouty\service\FcmService.class

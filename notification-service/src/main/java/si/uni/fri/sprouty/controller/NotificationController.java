@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import si.uni.fri.sprouty.dto.NotificationRequest;
-import si.uni.fri.sprouty.service.FcmService;
+import si.uni.fri.sprouty.service.NotificationService;
 
 @RestController
 @RequestMapping("/notifications")
@@ -16,7 +16,7 @@ import si.uni.fri.sprouty.service.FcmService;
 @Tag(name = "Push Notifications", description = "Endpoints for managing FCM delivery.")
 public class NotificationController {
 
-    private final FcmService fcmService;
+    private final NotificationService notificationService;
 
     @Operation(
             summary = "Send Notification",
@@ -29,7 +29,7 @@ public class NotificationController {
     @PostMapping("/send")
     public ResponseEntity<String> send(@RequestBody NotificationRequest request) {
         try {
-            fcmService.sendPush(request);
+            notificationService.sendPush(request);
             return ResponseEntity.ok("Sent");
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Failed: " + e.getMessage());

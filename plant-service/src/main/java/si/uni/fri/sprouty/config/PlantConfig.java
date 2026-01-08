@@ -12,42 +12,33 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.client.RestTemplate;
-
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 
 @Slf4j
 @Configuration
 @Profile("!test")
-public class FirebaseConfig {
+public class PlantConfig {
 
     @Value("${firebase.storage-bucket:sprouty-plantapp.firebasestorage.app}")
     private String storageBucket;
 
-    @PostConstruct
-    public void initializeFirebase() {
-        try {
-            if (FirebaseApp.getApps().isEmpty()) {
-                FirebaseOptions options = FirebaseOptions.builder()
-                        .setCredentials(GoogleCredentials.getApplicationDefault())
-                        .setStorageBucket(storageBucket)
-                        .build();
-
-                FirebaseApp.initializeApp(options);
-                log.info("Firebase Application has been successfully initialized.");
-            }
-        } catch (IOException e) {
-            log.error("Failed to initialize Firebase!", e);
-            throw new RuntimeException(e);
+    @Bean
+    public FirebaseApp firebaseApp() throws IOException {
+        if (FirebaseApp.getApps().isEmpty()) {
+            FirebaseOptions options = FirebaseOptions.builder()
+                    .setCredentials(GoogleCredentials.getApplicationDefault())
+                    .setStorageBucket(storageBucket)
+                    .build();
+            return FirebaseApp.initializeApp(options);
         }
+        return FirebaseApp.getInstance();
     }
 
     @Bean
     @Primary
-    public Firestore getFirestore() {
-        return FirestoreClient.getFirestore(FirebaseApp.getInstance(), "sprouty-firestore");
+    public Firestore getFirestore(FirebaseApp app) {
+        return FirestoreClient.getFirestore(app, "sprouty-firestore");
     }
-
 
     @Bean
     public RestTemplate restTemplate() {

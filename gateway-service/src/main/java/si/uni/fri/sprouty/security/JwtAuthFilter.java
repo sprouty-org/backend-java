@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
@@ -15,28 +16,27 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Component
 public class JwtAuthFilter implements GlobalFilter, Ordered {
 
-    // Public endpoints that dont require authentication
     private final List<String> publicEndpoints = List.of(
             "/actuator",
-            "/users/actuator",        // Add this
-            "/plants/actuator",       // Add this
+            "/users/actuator",
+            "/plants/actuator",
             "/sensors/actuator",
-            // Add this
-            "/notifications/actuator", // Add this
+            "/notifications/actuator",
             "/users/login",
             "/users/register",
             "/sensors",
-            "/swagger-ui",           // Basic check
-            "/v3/api-docs",          // Basic check
-            "/users/swagger-ui",     // Added for Gateway routing
-            "/plants/swagger-ui",    // Added for Gateway routing
-            "/sensors/swagger-ui",   // Added for Gateway routing
+            "/swagger-ui",
+            "/v3/api-docs",
+            "/users/swagger-ui",
+            "/plants/swagger-ui",
+            "/sensors/swagger-ui",
             "/notifications/swagger-ui",
             "/users/v3/api-docs",
             "/plants/v3/api-docs",
@@ -44,19 +44,27 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
             "/notifications/v3/api-docs"
     );
 
-    @Value("${jwt.secret:}")
+    @Value("${jwt.secret}")
     private String secretKey;
+
+    private SecretKey signingKey;
+
+    @PostConstruct
+    public void init() {
+        if (secretKey != null && !secretKey.isBlank()) {
+            byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
+            this.signingKey = Keys.hmacShaKeyFor(keyBytes);
+        }
+    }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getURI().getPath();
 
-        // Allow public endpoints
         if (publicEndpoints.stream().anyMatch(path::startsWith)) {
             return chain.filter(exchange);
         }
 
-        // Allow CORS preflight
         if (exchange.getRequest().getMethod().name().equals("OPTIONS")) {
             return chain.filter(exchange);
         }
@@ -68,30 +76,24 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
 
         String token = authHeader.substring(7);
         try {
-            if (secretKey == null || secretKey.isBlank()) {
-                return unauthorized(exchange);
-            }
-
-            byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
-            var signingKey = Keys.hmacShaKeyFor(keyBytes);
             Claims claims = Jwts.parser()
                     .verifyWith(signingKey)
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
 
-            // Forward the subject (UID) as a header
             String subject = claims.getSubject();
             if (subject != null && !subject.isBlank()) {
-                exchange = exchange.mutate()
+                ServerWebExchange mutatedExchange = exchange.mutate()
                         .request(r -> r.header("X-User-Id", subject))
                         .build();
+                return chain.filter(mutatedExchange);
             }
         } catch (JwtException | IllegalArgumentException e) {
             return unauthorized(exchange);
         }
 
-        return chain.filter(exchange);
+        return unauthorized(exchange);
     }
 
     private Mono<Void> unauthorized(ServerWebExchange exchange) {

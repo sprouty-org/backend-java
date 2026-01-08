@@ -9,13 +9,13 @@ import org.springframework.stereotype.Service;
 import si.uni.fri.sprouty.dto.NotificationRequest;
 
 @Service
-public class FcmService {
+public class NotificationService {
 
-    private final FirebaseMessaging fcm;
+    private final FirebaseMessaging firebaseMessaging;
     private final Firestore db;
 
-    public FcmService(FirebaseMessaging fcm, Firestore db) {
-        this.fcm = fcm;
+    public NotificationService(FirebaseMessaging firebaseMessaging, Firestore db) {
+        this.firebaseMessaging = firebaseMessaging;
         this.db = db;
     }
 
@@ -27,30 +27,29 @@ public class FcmService {
                     .get();
 
             if (!userDoc.exists()) {
-                System.err.println("User document not found in Firestore for ID: " + request.getUserId());
                 return;
             }
 
             String token = userDoc.getString("fcmToken");
 
             if (token == null || token.isEmpty()) {
-                System.err.println("Aborting push: No FCM token found for user: " + request.getUserId());
                 return;
             }
 
-            // Build the message with both Notification (for the popup) and Data (for the app logic)
-            Message message = Message.builder()
+            Message.Builder messageBuilder = Message.builder()
                     .setToken(token)
-                    .setNotification(Notification.builder()
-                            .setTitle(request.getTitle())
-                            .setBody(request.getBody())
-                            .build())
                     .putData("action", "REFRESH_PLANTS")
-                    .putData("userId", request.getUserId())
-                    .build();
+                    .putData("userId", request.getUserId());
 
-            String response = fcm.send(message);
-            System.out.println("Successfully sent FCM: " + response);
+            if (request.getTitle() != null && request.getBody() != null && !request.getTitle().isEmpty() && !request.getBody().isEmpty()) {
+                Notification notification = Notification.builder()
+                        .setTitle(request.getTitle())
+                        .setBody(request.getBody())
+                        .build();
+                messageBuilder.setNotification(notification);
+            }
+
+            firebaseMessaging.send(messageBuilder.build());
 
         } catch (Exception e) {
             System.err.println("FCM Exception: " + e.getMessage());

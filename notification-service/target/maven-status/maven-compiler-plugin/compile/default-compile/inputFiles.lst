@@ -1,5 +1,5 @@
-C:\Users\dadii\IdeaProjects\Sprouty\notification-service\src\main\java\si\uni\fri\sprouty\config\FirebaseConfig.java
+C:\Users\dadii\IdeaProjects\Sprouty\notification-service\src\main\java\si\uni\fri\sprouty\config\NotificationConfig.java
 C:\Users\dadii\IdeaProjects\Sprouty\notification-service\src\main\java\si\uni\fri\sprouty\config\OpenApiConfig.java
 C:\Users\dadii\IdeaProjects\Sprouty\notification-service\src\main\java\si\uni\fri\sprouty\controller\NotificationController.java
 C:\Users\dadii\IdeaProjects\Sprouty\notification-service\src\main\java\si\uni\fri\sprouty\NotificationServiceApplication.java
-C:\Users\dadii\IdeaProjects\Sprouty\notification-service\src\main\java\si\uni\fri\sprouty\service\FcmService.java
+C:\Users\dadii\IdeaProjects\Sprouty\notification-service\src\main\java\si\uni\fri\sprouty\service\NotificationService.java

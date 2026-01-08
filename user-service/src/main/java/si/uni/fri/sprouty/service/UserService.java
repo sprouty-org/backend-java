@@ -2,13 +2,16 @@ package si.uni.fri.sprouty.service;
 
 import com.google.cloud.firestore.Firestore;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.UserRecord;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 import si.uni.fri.sprouty.dto.*;
 
 import javax.crypto.SecretKey;
@@ -36,46 +39,68 @@ public class UserService {
     // --- Authentication Logic ---
 
     public AuthResponse registerWithEmail(EmailRegisterRequest request) throws Exception {
-        UserRecord.CreateRequest createRequest = new UserRecord.CreateRequest()
-                .setEmail(request.getEmail())
-                .setPassword(request.getPassword())
-                .setDisplayName(request.getDisplayName());
+        try {
+            UserRecord.CreateRequest createRequest = new UserRecord.CreateRequest()
+                    .setEmail(request.getEmail())
+                    .setPassword(request.getPassword())
+                    .setDisplayName(request.getDisplayName());
 
-        UserRecord userRecord = firebaseAuth.createUser(createRequest);
-        String uid = userRecord.getUid();
+            UserRecord userRecord = firebaseAuth.createUser(createRequest);
+            String uid = userRecord.getUid();
 
-        saveUserToFirestore(new User(uid, request.getEmail(), request.getDisplayName(), request.getFcmToken()));
-        return new AuthResponse(uid, generateInternalJwt(uid));
+            saveUserToFirestore(new User(uid, request.getEmail(), request.getDisplayName(), request.getFcmToken()));
+            return new AuthResponse(uid, generateInternalJwt(uid));
+        } catch (FirebaseAuthException e) {
+            if ("email-already-exists".equals(e.getAuthErrorCode().name().toLowerCase().replace("_", "-"))) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "An account with this email already exists.");
+            }
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Registration failed: " + e.getMessage());
+        }
     }
 
     public AuthResponse registerWithGoogle(RegisterRequest request) throws Exception {
-        String uid = verifyFirebaseToken(request.getIdToken());
-        UserRecord userRecord = firebaseAuth.getUser(uid);
+        try {
+            String uid = verifyFirebaseToken(request.getIdToken());
+            UserRecord userRecord = firebaseAuth.getUser(uid);
 
-        String email = userRecord.getEmail();
-        String displayName = (userRecord.getDisplayName() != null) ? userRecord.getDisplayName() : "Gardener";
+            String email = userRecord.getEmail();
+            String displayName = (userRecord.getDisplayName() != null) ? userRecord.getDisplayName() : "Gardener";
 
-        saveUserToFirestore(new User(uid, email, displayName, request.getFcmToken()));
-        return new AuthResponse(uid, generateInternalJwt(uid));
+            saveUserToFirestore(new User(uid, email, displayName, request.getFcmToken()));
+            return new AuthResponse(uid, generateInternalJwt(uid));
+        } catch (FirebaseAuthException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Google Token verification failed.");
+        }
     }
 
     public AuthResponse login(LoginRequest request) throws Exception {
-        String uid = verifyFirebaseToken(request.getIdToken());
-        updateFcmToken(uid, request.getFcmToken());
-        return new AuthResponse(uid, generateInternalJwt(uid));
+        try {
+            String uid = verifyFirebaseToken(request.getIdToken());
+            updateFcmToken(uid, request.getFcmToken());
+            return new AuthResponse(uid, generateInternalJwt(uid));
+        } catch (FirebaseAuthException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid or expired session. Please login again.");
+        }
     }
 
     public void deleteUserFully(String uid) throws Exception {
-        String url = "http://plant-service/plants/internal/user?uid=" + uid;
-        restTemplate.delete(url);
+        try {
+            String url = "http://plant-service/plants/internal/user?uid=" + uid;
+            restTemplate.delete(url);
 
-        db.collection("users").document(uid).delete().get();
-        firebaseAuth.deleteUser(uid);
+            db.collection("users").document(uid).delete().get();
+
+            firebaseAuth.deleteUser(uid);
+        } catch (FirebaseAuthException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User record not found in Auth system.");
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Partial deletion occurred. System sync required.");
+        }
     }
 
     // --- Internal Helpers ---
 
-    private String verifyFirebaseToken(String idToken) throws Exception {
+    private String verifyFirebaseToken(String idToken) throws FirebaseAuthException {
         FirebaseToken decodedToken = firebaseAuth.verifyIdToken(idToken);
         return decodedToken.getUid();
     }

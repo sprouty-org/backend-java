@@ -15,7 +15,7 @@ class NotificationServiceApplicationTests {
     private Firestore firestore;
 
     @MockBean
-    private FirebaseMessaging fcm;
+    private FirebaseMessaging firebaseMessaging;
 
     @Test
     void contextLoads() {
