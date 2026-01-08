@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,7 @@ public class PlantController {
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "500", description = "AI/Storage failure", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping(value = "/identify", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<IdentificationResponse> identifyPlant(
             @Parameter(hidden = true) @RequestHeader(name = "X-User-Id") String uid,
@@ -53,6 +55,7 @@ public class PlantController {
             @ApiResponse(responseCode = "200", description = "Profile retrieved", content = @Content(schema = @Schema(implementation = GardenProfileResponse.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/profile")
     public ResponseEntity<GardenProfileResponse> getGardenProfile(
             @Parameter(hidden = true) @RequestHeader(name = "X-User-Id") String uid) throws Exception {
@@ -65,6 +68,7 @@ public class PlantController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Not your plant", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "404", description = "Plant not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/{id}/water")
     public ResponseEntity<Void> waterPlant(
             @Parameter(hidden = true) @RequestHeader(name = "X-User-Id") String uid,
@@ -78,6 +82,7 @@ public class PlantController {
             @ApiResponse(responseCode = "200", description = "Plant renamed"),
             @ApiResponse(responseCode = "404", description = "Plant not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
+    @SecurityRequirement(name = "bearerAuth")
     @PatchMapping("/{id}/rename")
     public ResponseEntity<Void> renamePlant(
             @Parameter(hidden = true) @RequestHeader(name = "X-User-Id") String uid,
@@ -92,6 +97,7 @@ public class PlantController {
             @ApiResponse(responseCode = "200", description = "Notifications toggled"),
             @ApiResponse(responseCode = "404", description = "Plant not found")
     })
+    @SecurityRequirement(name = "bearerAuth")
     @PatchMapping("/{id}/notifications")
     public ResponseEntity<Map<String, Boolean>> toggleNotifications(
             @Parameter(hidden = true) @RequestHeader(name = "X-User-Id") String uid,
@@ -108,6 +114,7 @@ public class PlantController {
             @ApiResponse(responseCode = "200", description = "Sensor linked"),
             @ApiResponse(responseCode = "400", description = "Sensor already in use", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/connect-sensor")
     public ResponseEntity<String> connectSensor(
             @Parameter(hidden = true) @RequestHeader(name = "X-User-Id") String uid,
@@ -118,6 +125,11 @@ public class PlantController {
     }
 
     @Operation(summary = "Disconnect sensor")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Sensor disconnected"),
+            @ApiResponse(responseCode = "404", description = "Plant not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/{id}/disconnect-sensor")
     public ResponseEntity<Void> disconnectSensor(
             @Parameter(hidden = true) @RequestHeader(name = "X-User-Id") String uid,
@@ -131,8 +143,11 @@ public class PlantController {
     @Operation(summary = "Delete plant")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Plant deleted"),
-            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Plant not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
+    @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePlant(
             @Parameter(hidden = true) @RequestHeader(name = "X-User-Id") String uid,

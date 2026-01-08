@@ -4,6 +4,7 @@ si\uni\fri\sprouty\PlantServiceApplication.class
 si\uni\fri\sprouty\config\OpenApiConfig.class
 si\uni\fri\sprouty\service\WateringWatcher.class
 si\uni\fri\sprouty\service\PlantService.class
-si\uni\fri\sprouty\config\FirebaseConfig.class
+si\uni\fri\sprouty\config\PlantConfig.class
+si\uni\fri\sprouty\config\SchedulingConfig.class
 si\uni\fri\sprouty\dto\GardenProfileResponse.class
 si\uni\fri\sprouty\service\PlantService$1.class

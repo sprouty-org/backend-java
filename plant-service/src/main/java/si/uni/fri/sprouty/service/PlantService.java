@@ -27,6 +27,9 @@ public class PlantService {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final RestTemplate restTemplate;
 
+    private final String USER_PLANTS_COLLECTION = "user_plants";
+    private final String MASTER_PLANTS_COLLECTION = "master_plants";
+
     @Value("${openai.api.key}")
     private String openAiKey;
 
@@ -41,7 +44,7 @@ public class PlantService {
     // --- SECURITY HELPER ---
 
     private DocumentReference getValidatedPlantReference(String userId, String plantId) throws Exception {
-        DocumentReference docRef = db.collection("user_plants").document(plantId);
+        DocumentReference docRef = db.collection(USER_PLANTS_COLLECTION).document(plantId);
         DocumentSnapshot snapshot = docRef.get().get();
 
         if (!snapshot.exists()) {
@@ -63,7 +66,7 @@ public class PlantService {
         String masterId = recognizedSpecies.toLowerCase().trim().replace(" ", "_");
         String publicImageUrl = uploadImageToStorage(imageBytes, uid);
 
-        DocumentReference masterRef = db.collection("master_plants").document(masterId);
+        DocumentReference masterRef = db.collection(MASTER_PLANTS_COLLECTION).document(masterId);
         DocumentSnapshot masterSnap = masterRef.get().get();
 
         MasterPlant masterPlant;
@@ -86,7 +89,7 @@ public class PlantService {
         userPlant.setConnectedSensorId(null);
         userPlant.setNotificationsEnabled(true);
 
-        DocumentReference userPlantRef = db.collection("user_plants").document();
+        DocumentReference userPlantRef = db.collection(USER_PLANTS_COLLECTION).document();
         userPlant.setId(userPlantRef.getId());
         userPlantRef.set(userPlant).get();
 
@@ -98,7 +101,7 @@ public class PlantService {
         DocumentReference docRef = getValidatedPlantReference(userId, plantId);
 
         if (sensorId != null && !sensorId.isBlank()) {
-            QuerySnapshot existing = db.collection("user_plants")
+            QuerySnapshot existing = db.collection(USER_PLANTS_COLLECTION)
                     .whereEqualTo("connectedSensorId", sensorId)
                     .get().get();
             if (!existing.isEmpty()) {
@@ -189,27 +192,9 @@ public class PlantService {
         }
     }
 
-    // RESTORED: This method was in your original but missing in my last reply
-    public List<MasterPlant> getRelevantMasterPlants(String userId) throws Exception {
-        List<UserPlant> userPlants = getUserPlants(userId);
-        List<String> speciesIds = userPlants.stream()
-                .map(UserPlant::getSpeciesId)
-                .distinct()
-                .filter(id -> id != null && !id.isEmpty())
-                .collect(Collectors.toList());
-        if (speciesIds.isEmpty()) return List.of();
-        Query masterQuery = db.collection("master_plants").whereIn(FieldPath.documentId(), speciesIds);
-        return masterQuery.get().get().getDocuments().stream()
-                .map(doc -> {
-                    MasterPlant master = doc.toObject(MasterPlant.class);
-                    master.setId(doc.getId());
-                    return master;
-                }).collect(Collectors.toList());
-    }
-
     // --- STORAGE & DELETE ---
 
-    private String uploadImageToStorage(byte[] imageBytes, String userId) {
+    String uploadImageToStorage(byte[] imageBytes, String userId) {
         Bucket bucket = StorageClient.getInstance().bucket();
         String fileName = String.format("users/%s/plants/%s.jpg", userId, UUID.randomUUID());
         Blob blob = bucket.create(fileName, imageBytes, "image/jpeg");
@@ -222,7 +207,7 @@ public class PlantService {
     }
 
     public void deleteAllPlantsForUser(String uid) throws Exception {
-        Query query = db.collection("user_plants").whereEqualTo("ownerId", uid);
+        Query query = db.collection(USER_PLANTS_COLLECTION).whereEqualTo("ownerId", uid);
         QuerySnapshot snapshot = query.get().get();
 
         if (snapshot.isEmpty()) return;
@@ -237,7 +222,7 @@ public class PlantService {
     // --- GETTERS ---
 
     public List<UserPlant> getUserPlants(String userId) throws Exception {
-        return db.collection("user_plants").whereEqualTo("ownerId", userId).get().get()
+        return db.collection(USER_PLANTS_COLLECTION).whereEqualTo("ownerId", userId).get().get()
                 .getDocuments().stream()
                 .map(doc -> doc.toObject(UserPlant.class))
                 .collect(Collectors.toList());
@@ -253,7 +238,7 @@ public class PlantService {
                 .filter(id -> id != null && !id.isEmpty())
                 .collect(Collectors.toList());
 
-        List<MasterPlant> masterPlants = db.collection("master_plants")
+        List<MasterPlant> masterPlants = db.collection(MASTER_PLANTS_COLLECTION)
                 .whereIn(FieldPath.documentId(), speciesIds)
                 .get().get().getDocuments().stream()
                 .map(doc -> doc.toObject(MasterPlant.class))
