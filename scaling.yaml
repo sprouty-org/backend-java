@@ -8,7 +8,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: gateway-service
-  minReplicas: 2 # Gateway should always have at least 2 for high availability
+  minReplicas: 2
   maxReplicas: 5
   metrics:
     - type: Resource
@@ -38,7 +38,7 @@ spec:
           type: Utilization
           averageUtilization: 50
 ---
-# --- HPA: PLANT SERVICE (Critical for AI Load) ---
+# --- HPA: PLANT SERVICE ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
