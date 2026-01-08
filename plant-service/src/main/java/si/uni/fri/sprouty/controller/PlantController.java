@@ -87,7 +87,7 @@ public class PlantController {
     public ResponseEntity<Void> renamePlant(
             @Parameter(hidden = true) @RequestHeader(name = "X-User-Id") String uid,
             @PathVariable(name = "id") String plantId,
-            @RequestParam String newName) throws Exception {
+            @RequestParam(name = "newName") String newName) throws Exception {
         plantService.updatePlantName(uid, plantId, newName);
         return ResponseEntity.ok().build();
     }
@@ -102,7 +102,7 @@ public class PlantController {
     public ResponseEntity<Map<String, Boolean>> toggleNotifications(
             @Parameter(hidden = true) @RequestHeader(name = "X-User-Id") String uid,
             @PathVariable(name = "id") String plantId,
-            @RequestParam boolean enabled) throws Exception {
+            @RequestParam(name = "enabled") boolean enabled) throws Exception {
         plantService.updateNotificationSettings(uid, plantId, enabled);
         return ResponseEntity.ok(Map.of("notificationsEnabled", enabled));
     }
@@ -118,8 +118,8 @@ public class PlantController {
     @PostMapping("/connect-sensor")
     public ResponseEntity<String> connectSensor(
             @Parameter(hidden = true) @RequestHeader(name = "X-User-Id") String uid,
-            @RequestParam String plantId,
-            @RequestParam String sensorId) throws Exception {
+            @RequestParam(name = "plantId") String plantId,
+            @RequestParam(name = "sensorId") String sensorId) throws Exception {
         plantService.manageSensor(uid, plantId, sensorId);
         return ResponseEntity.ok("Sensor successfully linked.");
     }
@@ -158,7 +158,7 @@ public class PlantController {
 
     @Operation(summary = "Internal cleanup", hidden = true)
     @DeleteMapping("/internal/user")
-    public ResponseEntity<Void> deleteUserPlantsInternal(@RequestParam String uid) throws Exception {
+    public ResponseEntity<Void> deleteUserPlantsInternal(@RequestParam(name = "uid") String uid) throws Exception {
         plantService.deleteAllPlantsForUser(uid);
         return ResponseEntity.noContent().build();
     }
