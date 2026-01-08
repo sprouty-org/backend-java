@@ -3,11 +3,16 @@ package si.uni.fri.sprouty.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
+import si.uni.fri.sprouty.dto.ErrorResponse;
 import si.uni.fri.sprouty.dto.ImageUploadRequest;
 import si.uni.fri.sprouty.dto.SensorDataRequest;
 import si.uni.fri.sprouty.service.SensorService;
@@ -16,7 +21,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/sensors")
-@Tag(name = "Sensor Integration", description = "Endpoints for IoT hardware (ESP32/ESP32-CAM) to transmit plant vitals.")
+@Tag(name = "Sensor Integration", description = "IoT Hardware communication layer.")
 public class SensorController {
 
     private final SensorService sensorService;
@@ -25,16 +30,11 @@ public class SensorController {
         this.sensorService = sensorService;
     }
 
-    @Operation(
-            summary = "Ingest Environmental Telemetry",
-            description = "Receives temperature, air humidity, and soil moisture from a physical sensor. " +
-                    "Calculates plant health based on master species thresholds and triggers alerts if necessary."
-    )
+    @Operation(summary = "Ingest Environmental Telemetry")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Data point recorded and health status updated"),
-            @ApiResponse(responseCode = "400", description = "Invalid payload (e.g. moisture out of 0-100 range)"),
-            @ApiResponse(responseCode = "404", description = "No UserPlant found associated with this sensor ID"),
-            @ApiResponse(responseCode = "500", description = "Firestore or Notification Service connectivity error")
+            @ApiResponse(responseCode = "200", description = "Telemetry updated"),
+            @ApiResponse(responseCode = "404", description = "Sensor ID not recognized", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Server error", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping(value = "/data", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> receiveSensorData(@Valid @RequestBody SensorDataRequest request) {
@@ -44,23 +44,19 @@ public class SensorController {
                 request.getHumidity(),
                 request.getMoisture()
         );
-        return ResponseEntity.ok("Sensor data saved");
+        return ResponseEntity.ok("Data ingested.");
     }
 
-    @Operation(
-            summary = "Upload Plant Snapshot",
-            description = "Uploads binary image data (JPEG) to Firebase Storage. " +
-                    "The image is stored in a structured path: `sensors/{mac}/{timestamp}.jpg`."
-    )
+    @Operation(summary = "Upload Plant Snapshot")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Image uploaded successfully. Returns the public signed URL."),
-            @ApiResponse(responseCode = "400", description = "Missing multipart image file"),
-            @ApiResponse(responseCode = "500", description = "Cloud Storage upload failed")
+            @ApiResponse(responseCode = "200", description = "URL of stored image returned"),
+            @ApiResponse(responseCode = "400", description = "Invalid multipart data", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Storage failure", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping(value = "/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadImage(@ModelAttribute ImageUploadRequest request) {
         if (request.getImage() == null || request.getImage().isEmpty()) {
-            return ResponseEntity.badRequest().body("Image file is missing or empty");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Multipart file is missing.");
         }
 
         try {
@@ -69,14 +65,13 @@ public class SensorController {
                     request.getSensorId()
             );
 
-            return (imageUrl != null)
-                    ? ResponseEntity.ok("Image processed: " + imageUrl)
-                    : ResponseEntity.internalServerError().body("Failed to upload to storage");
+            if (imageUrl == null) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Cloud storage failed to provide URL.");
+            }
+            return ResponseEntity.ok(imageUrl);
 
         } catch (IOException e) {
-            return ResponseEntity.internalServerError().body("Error reading image bytes");
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("System error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to read image buffer.");
         }
     }
 }

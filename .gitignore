@@ -1,61 +1,40 @@
-# Maven
-/target
-/pom.xml.tag
-/pom.xml.releaseBackup
-/pom.xml.versionsBackup
-/pom.xml.next
-/release.properties
-/dependency-reduced-pom.xml
-/buildNumber.properties
+# --- JAVA & MAVEN ---
+**/target/
+**/*.class
+**/*.jar
+**/*.war
+**/*.jar.original
 
-# IntelliJ IDEA
-/.idea
-/*.iml
-/*.iws
-/out
-/.idea_modules
-/.idea/runConfigurations
+# nested microservice folders
+.mtl.xml
+.project
+.classpath
 
-# Java build / binary files
-*.class
-*.jar
-*.war
-*.ear
-*.jar.original
+# --- INTELLIJ / IDE ---
+.idea/
+*.iml
+*.iws
+out/
+gen/
 
-# Logs and reports
-*.log
-/logs/
-/build/reports/
-/coverage/
-jacoco.exec
-/test-output/
-
-# OS generated
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# Temporary / swap files
-*~
-*.tmp
-*.swp
-*.bak
-
-# Secrets / local config (do not commit credentials)
+# --- SECRETS & CONFIG (CRITICAL) ---
 .env
 .env.*
-secrets.properties
-credentials.properties
-firebase-key.json
-gcp-key.json
-cleanup-policy.json
+secrets/
+*.json
+!infrastructure.yaml
+!scaling.yaml
+!docker-compose.yaml
 
-# Docker overrides
-docker-compose.override.yml
-.docker/
+# --- LOGS & TEMP ---
+*.log
+logs/
+temp/
+tmp/
 
-# Misc
-/*.log.*
-/local.properties
-.idea_local/
+# --- OS GENERATED ---
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+desktop.ini

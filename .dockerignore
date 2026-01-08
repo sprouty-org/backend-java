@@ -4,3 +4,5 @@ target
 .git
 .gitignore
 *.md
+/secrets
+.env

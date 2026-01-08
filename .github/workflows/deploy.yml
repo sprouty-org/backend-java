@@ -9,6 +9,7 @@ on:
       - 'plant-service/**'
       - 'sensor-service/**'
       - 'notification-service/**'
+      - 'kubernetes/**'
       - 'pom.xml'
 
 jobs:
@@ -33,6 +34,7 @@ jobs:
     if: ${{ needs.changes.outputs.services != '[]' }}
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         service: ${{ fromJSON(needs.changes.outputs.services) }}
 
@@ -74,6 +76,10 @@ jobs:
           cluster_name: sprouty-cluster
           location: europe-west4
 
-      - name: Restart K8s Deployment
-        # Forces Kubernetes to pull the ':latest' image we just pushed
-        run: kubectl rollout restart deployment ${{ matrix.service }}
+      - name: Apply Infrastructure and Scaling YAMLs
+        run: |
+          kubectl apply -f kubernetes/infrastructure.yaml
+          kubectl apply -f kubernetes/scaling.yaml
+
+      - name: Restart Kubernetes Deployment
+        run: kubectl rollout status deployment/${{ matrix.service }} && kubectl rollout restart deployment/${{ matrix.service }}

@@ -6,6 +6,7 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,7 @@ class NotificationServiceTest {
         request.setTitle("Water Me!");
         request.setBody("I am thirsty.");
 
-        mockFirestoreUser(userId, "mock-fcm-token");
+        mockFirestoreUser(userId);
         when(fcm.send(any(Message.class))).thenReturn("msg_id_123");
 
         // Act
@@ -65,7 +66,7 @@ class NotificationServiceTest {
         NotificationRequest request = new NotificationRequest();
         request.setUserId(userId);
 
-        mockFirestoreUser(userId, "mock-fcm-token");
+        mockFirestoreUser(userId);
 
         // Act
         notificationService.sendPush(request);
@@ -75,7 +76,7 @@ class NotificationServiceTest {
     }
 
     @Test
-    void sendPush_ShouldAbort_WhenUserNotFound() throws Exception {
+    void sendPush_ShouldAbort_WhenUserNotFound() throws FirebaseMessagingException {
         // Arrange
         String userId = "missing_user";
         when(db.collection("users")).thenReturn(collectionReference);
@@ -86,18 +87,27 @@ class NotificationServiceTest {
         NotificationRequest request = new NotificationRequest();
         request.setUserId(userId);
 
-        // Act
-        notificationService.sendPush(request);
+        // Act & Assert
+        // We now expect the ResponseStatusException because of our Enterprise logic
+        org.springframework.web.server.ResponseStatusException exception = assertThrows(
+                org.springframework.web.server.ResponseStatusException.class,
+                () -> notificationService.sendPush(request)
+        );
 
-        // Assert
+        // Assert the specific status code and message
+        assertEquals(org.springframework.http.HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertNotNull(exception.getReason());
+        assertTrue(exception.getReason().contains("Target user not found"));
+
+        // Final proof: verify that FCM was never called
         verify(fcm, never()).send(any());
     }
 
-    private void mockFirestoreUser(String userId, String token) throws Exception {
+    private void mockFirestoreUser(String userId) {
         when(db.collection("users")).thenReturn(collectionReference);
         when(collectionReference.document(userId)).thenReturn(documentReference);
         when(documentReference.get()).thenReturn(ApiFutures.immediateFuture(documentSnapshot));
         when(documentSnapshot.exists()).thenReturn(true);
-        when(documentSnapshot.getString("fcmToken")).thenReturn(token);
+        when(documentSnapshot.getString("fcmToken")).thenReturn("mock-fcm-token");
     }
 }
