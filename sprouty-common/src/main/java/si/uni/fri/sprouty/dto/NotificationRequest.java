@@ -3,11 +3,16 @@ package si.uni.fri.sprouty.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Schema(description = "Request object for sending push notifications or triggering silent background syncs.")
 public class NotificationRequest {
 
@@ -22,5 +27,5 @@ public class NotificationRequest {
 
     @Schema(description = "Key-value pairs for custom data payloads (silent updates).",
             example = "{\"action\": \"REFRESH_PLANTS\", \"plantId\": \"123\"}")
-    private Map<String, String> data;
+    private Map<String, String> data = new HashMap<>();
 }
