@@ -33,7 +33,6 @@ spring:
       grpc:
         enabled: false
 
-# ADD THIS BLOCK
 springdoc:
   swagger-ui:
     urls:
