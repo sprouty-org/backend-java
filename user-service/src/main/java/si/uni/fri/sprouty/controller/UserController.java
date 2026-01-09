@@ -59,6 +59,21 @@ public class UserController {
         return ResponseEntity.ok(userService.login(request));
     }
 
+    @Operation(summary = "Update FCM Token", description = "Updates the Firebase Cloud Messaging token for push notifications.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Token updated successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal system error", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @SecurityRequirement(name = "bearerAuth")
+    @PatchMapping("/update-fcm")
+    public ResponseEntity<Void> updateFcmToken(
+            @Parameter(hidden = true) @RequestHeader("X-User-Id") String uid,
+            @RequestBody UpdateFcmRequest request){
+            userService.updateFcmToken(uid, request.getFcmToken());
+            return ResponseEntity.ok().build();
+    }
+
     @Operation(summary = "Delete Account", description = "Calls Plant Service to remove plants, then cleans up User records.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Account fully deleted"),

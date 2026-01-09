@@ -126,11 +126,19 @@ public class UserService {
         db.collection("users").document(user.getUid()).set(user).get();
     }
 
-    private void updateFcmToken(String uid, String fcmToken) throws Exception {
-        if (fcmToken == null || fcmToken.isEmpty()) return;
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("fcmToken", fcmToken);
-        db.collection("users").document(uid).update(updates).get();
+    public void updateFcmToken(String uid, String fcmToken) {
+        try {
+            if (fcmToken == null || fcmToken.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "FCM Token cannot be empty");
+            }
+            Map<String, Object> updates = new HashMap<>();
+            updates.put("fcmToken", fcmToken);
+            db.collection("users").document(uid).update(updates).get();
+            logger.info("FCM Token updated successfully for UID: {}", uid);
+        } catch (Exception e) {
+            logger.error("Error updating FCM token for UID: {}", uid, e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to update FCM token in database");
+        }
     }
 
     private String generateInternalJwt(String uid) {
