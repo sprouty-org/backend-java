@@ -25,7 +25,7 @@ class PlantServiceTest {
     @Mock private DocumentSnapshot documentSnapshot;
 
     @InjectMocks
-    @Spy // We use @Spy so we can mock specific internal methods
+    @Spy
     private PlantService plantService;
 
     @BeforeEach
@@ -45,7 +45,7 @@ class PlantServiceTest {
         doReturn(species).when(plantService).callPlantRecognitionApi(any());
         doReturn("https://fake.com/fiddle.jpg").when(plantService).uploadImageToStorage(any(), any());
 
-        // 2. Mock Firestore via Reflection (using the same dbMock from the previous fix)
+        // 2. Mock Firestore
         Firestore dbMock = mock(Firestore.class, RETURNS_DEEP_STUBS);
         java.lang.reflect.Field field = PlantService.class.getDeclaredField("db");
         field.setAccessible(true);
@@ -54,7 +54,7 @@ class PlantServiceTest {
         // 3. Simulate MASTER DATA NOT FOUND
         DocumentReference masterDoc = dbMock.collection("master_plants").document(masterId);
         when(masterDoc.get()).thenReturn(ApiFutures.immediateFuture(documentSnapshot));
-        when(documentSnapshot.exists()).thenReturn(false); // <--- The "Miss"
+        when(documentSnapshot.exists()).thenReturn(false);
 
         // 4. Mock OpenAI Response
         String mockJsonResponse = "{\"choices\":[{\"message\":{\"content\":\"{" +
@@ -66,7 +66,7 @@ class PlantServiceTest {
         when(restTemplate.postForEntity(contains("openai.com"), any(), eq(String.class)))
                 .thenReturn(ResponseEntity.ok(mockJsonResponse));
 
-        // 5. Mock the Saves using DISTINCT variables
+        // 5. Mock the Saves
         // For Master Save
         when(masterDoc.set(any())).thenReturn(ApiFutures.immediateFuture(null));
 
@@ -83,12 +83,7 @@ class PlantServiceTest {
 
         // 1. Verify OpenAI was called
         verify(restTemplate, times(1)).postForEntity(contains("openai.com"), any(), any());
-
-        // 2. THE FIX: Verify specifically that masterDoc was saved to
-        // Use the specific mock object we created for the master collection
         verify(masterDoc).set(any(si.uni.fri.sprouty.dto.MasterPlant.class));
-
-        // 3. Verify userDoc was saved to
         verify(userDoc).set(any(si.uni.fri.sprouty.dto.UserPlant.class));
     }
 }

@@ -60,16 +60,11 @@ public class SensorController {
         }
 
         try {
-            String imageUrl = sensorService.uploadSensorImage(
-                    request.getImage().getBytes(),
-                    request.getSensorId()
-            );
-
+            String imageUrl = sensorService.uploadSensorImage(request.getImage().getBytes(), request.getSensorId());
             if (imageUrl == null) {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Cloud storage failed to provide URL.");
             }
             return ResponseEntity.ok(imageUrl);
-
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to read image buffer.");
         }

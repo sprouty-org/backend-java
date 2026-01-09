@@ -118,9 +118,7 @@ public class PlantService {
         DocumentReference docRef = getValidatedPlantReference(userId, plantId);
         try {
             if (sensorId != null && !sensorId.isBlank()) {
-                QuerySnapshot existing = db.collection(USER_PLANTS_COLLECTION)
-                        .whereEqualTo("connectedSensorId", sensorId)
-                        .get().get();
+                QuerySnapshot existing = db.collection(USER_PLANTS_COLLECTION).whereEqualTo("connectedSensorId", sensorId).get().get();
                 if (!existing.isEmpty()) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This sensor is already linked to another plant.");
                 }

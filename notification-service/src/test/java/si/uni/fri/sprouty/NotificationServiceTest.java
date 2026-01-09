@@ -88,7 +88,6 @@ class NotificationServiceTest {
         request.setUserId(userId);
 
         // Act & Assert
-        // We now expect the ResponseStatusException because of our Enterprise logic
         org.springframework.web.server.ResponseStatusException exception = assertThrows(
                 org.springframework.web.server.ResponseStatusException.class,
                 () -> notificationService.sendPush(request)
@@ -99,7 +98,6 @@ class NotificationServiceTest {
         assertNotNull(exception.getReason());
         assertTrue(exception.getReason().contains("Target user not found"));
 
-        // Final proof: verify that FCM was never called
         verify(fcm, never()).send(any());
     }
 

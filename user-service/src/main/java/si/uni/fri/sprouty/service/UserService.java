@@ -49,8 +49,8 @@ public class UserService {
                     .setDisplayName(request.getDisplayName());
 
             UserRecord userRecord = firebaseAuth.createUser(createRequest);
-            String uid = userRecord.getUid();
 
+            String uid = userRecord.getUid();
             saveUserToFirestore(new User(uid, request.getEmail(), request.getDisplayName(), request.getFcmToken()));
             return new AuthResponse(uid, generateInternalJwt(uid));
         } catch (FirebaseAuthException e) {

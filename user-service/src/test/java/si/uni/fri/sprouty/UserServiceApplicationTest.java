@@ -12,7 +12,6 @@ import org.springframework.web.client.RestTemplate;
 @ActiveProfiles("test")
 class UserServiceApplicationTests {
 
-    // These MUST match the types in your AuthController constructor
     @MockBean
     private FirebaseAuth firebaseAuth;
 

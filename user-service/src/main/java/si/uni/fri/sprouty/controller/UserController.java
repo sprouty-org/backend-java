@@ -59,7 +59,7 @@ public class UserController {
         return ResponseEntity.ok(userService.login(request));
     }
 
-    @Operation(summary = "Delete Account", description = "Triggers cascading deletion: calls Plant Service to remove plants, then cleans up User records.")
+    @Operation(summary = "Delete Account", description = "Calls Plant Service to remove plants, then cleans up User records.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Account fully deleted"),
             @ApiResponse(responseCode = "404", description = "User not found in Auth system", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),

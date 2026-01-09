@@ -10,6 +10,6 @@ public class LoginRequest {
     @Schema(example = "eyJhbGciOiJSUzI1NiIs...", description = "Firebase ID Token from Frontend SDK")
     private String idToken;
 
-    @Schema(example = "fcm_token_12345", description = "Current FCM token for notifications")
+    @Schema(example = "test_fcm_token", description = "Current FCM token for notifications")
     private String fcmToken;
 }

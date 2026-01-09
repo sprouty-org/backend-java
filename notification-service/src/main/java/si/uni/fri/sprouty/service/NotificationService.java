@@ -26,10 +26,7 @@ public class NotificationService {
 
     public void sendPush(NotificationRequest request) {
         try {
-            DocumentSnapshot userDoc = db.collection("users")
-                    .document(request.getUserId())
-                    .get()
-                    .get();
+            DocumentSnapshot userDoc = db.collection("users").document(request.getUserId()).get().get();
 
             if (!userDoc.exists()) {
                 logger.warn("Notification failed: User {} does not exist", request.getUserId());
@@ -44,8 +41,7 @@ public class NotificationService {
             }
 
             // Build the FCM Message
-            Message.Builder messageBuilder = Message.builder()
-                    .setToken(token);
+            Message.Builder messageBuilder = Message.builder().setToken(token);
 
             // Add Custom Data Payload (Essential for silent syncs)
             messageBuilder.putData("action", "REFRESH_PLANTS");
@@ -61,6 +57,7 @@ public class NotificationService {
                         .setTitle(request.getTitle())
                         .setBody(request.getBody())
                         .build();
+
                 messageBuilder.setNotification(notification);
             }
 

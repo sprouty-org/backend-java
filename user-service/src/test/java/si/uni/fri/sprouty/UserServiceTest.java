@@ -40,7 +40,6 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        // Inject the secret key for JWT generation
         ReflectionTestUtils.setField(userService, "secretKey", "mySuperSecretKeyForTestingPurposes1234567890");
     }
 

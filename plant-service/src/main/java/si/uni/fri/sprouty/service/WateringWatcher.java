@@ -74,7 +74,6 @@ public class WateringWatcher {
 
                 if (lastWatered == null || intervalDays == null) continue;
 
-                // 1. Calculate Logic
                 double dryThreshold = speciesThresholds.getOrDefault(speciesName, 30.0);
                 long lastWateredSeconds = lastWatered / 1000;
                 long secondsInInterval = intervalDays * oneDayInSeconds;
@@ -86,7 +85,6 @@ public class WateringWatcher {
                 boolean canTrustSensor = hasSensor && isDataFresh;
                 boolean isActuallyDry = (canTrustSensor && currentSoilHum != null && currentSoilHum < dryThreshold);
 
-                // 2. Decision Engine
                 if (isOverdueByCalendar) {
                     if (canTrustSensor && currentSoilHum != null && currentSoilHum >= dryThreshold) {
                         doc.getReference().update("healthStatus", "Healthy");

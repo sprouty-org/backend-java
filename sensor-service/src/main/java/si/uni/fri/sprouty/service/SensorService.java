@@ -28,6 +28,7 @@ public class SensorService {
     private final RestTemplate restTemplate;
     private final Firestore db;
     private final StorageClient storage;
+
     private final String NOTIFICATION_SERVICE_URL = "http://notification-service/notifications/send";
 
     public SensorService(RestTemplate restTemplate, Firestore db, StorageClient storage) {
@@ -39,9 +40,7 @@ public class SensorService {
     public void processSensorUpdate(String macAddress, double temp, double humAir, double humSoil) {
         try {
             // Find the plant linked to this sensor
-            QuerySnapshot qs = db.collection("user_plants")
-                    .whereEqualTo("connectedSensorId", macAddress)
-                    .get().get();
+            QuerySnapshot qs = db.collection("user_plants").whereEqualTo("connectedSensorId", macAddress).get().get();
 
             if (qs.isEmpty()) {
                 logger.warn("Received data for unlinked sensor: {}", macAddress);
@@ -52,8 +51,7 @@ public class SensorService {
             UserPlant userPlant = doc.toObject(UserPlant.class);
 
             // Get plant thresholds
-            DocumentSnapshot masterDoc = db.collection("master_plants")
-                    .document(userPlant.getSpeciesId()).get().get();
+            DocumentSnapshot masterDoc = db.collection("master_plants").document(userPlant.getSpeciesId()).get().get();
             MasterPlant master = masterDoc.toObject(MasterPlant.class);
 
             String newHealthStatus = (master != null) ? calculateHealth(temp, humSoil, humAir, master) : "Unknown";

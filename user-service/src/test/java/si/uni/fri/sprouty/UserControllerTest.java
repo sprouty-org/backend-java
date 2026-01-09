@@ -53,7 +53,7 @@ class UserControllerTest {
     @Test
     void deleteAccount_ShouldReturn204_WhenGatewayHeaderPresent() throws Exception {
         mockMvc.perform(delete("/users/me")
-                        .header("X-User-Id", "uid-123")) // Simulate Gateway injection
+                        .header("X-User-Id", "uid-123"))
                 .andExpect(status().isNoContent());
     }
 }

@@ -6,7 +6,6 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.cloud.FirestoreClient;
-import com.google.firebase.messaging.FirebaseMessaging;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -42,10 +41,6 @@ public class UserConfig {
         return FirebaseAuth.getInstance(firebaseApp);
     }
 
-    @Bean
-    public FirebaseMessaging firebaseMessaging(FirebaseApp firebaseApp) {
-        return FirebaseMessaging.getInstance(firebaseApp);
-    }
 
     @Bean
     public Firestore firestore(FirebaseApp firebaseApp) {

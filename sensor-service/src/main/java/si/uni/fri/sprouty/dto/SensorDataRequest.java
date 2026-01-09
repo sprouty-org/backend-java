@@ -11,7 +11,7 @@ import lombok.Data;
 public class SensorDataRequest {
 
     @NotBlank(message = "Sensor ID is required")
-    @Schema(description = "MAC address or unique hardware ID", example = "AABBCCDDEEFF")
+    @Schema(description = "MAC address of the sensor without \":\"", example = "AABBCCDDEEFF")
     private String sensorId;
 
     @Min(0) @Max(100)
