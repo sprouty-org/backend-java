@@ -7,39 +7,26 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>sensor-service</artifactId> <dependencies>
+    <artifactId>sensor-service</artifactId>
 
-    <dependency>
-        <groupId>si.uni.fri.sprouty</groupId>
-        <artifactId>sprouty-common</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-actuator</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-
-    <dependency>
-        <groupId>org.zalando</groupId>
-        <artifactId>logbook-spring-boot-starter</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springdoc</groupId>
-        <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>com.google.firebase</groupId>
-        <artifactId>firebase-admin</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-test</artifactId>
-        <scope>test</scope>
-    </dependency>
-</dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>si.uni.fri.sprouty</groupId>
+            <artifactId>sprouty-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.firebase</groupId>
+            <artifactId>firebase-admin</artifactId>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
