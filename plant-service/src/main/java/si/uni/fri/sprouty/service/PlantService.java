@@ -132,7 +132,18 @@ public class PlantService {
 
     public void resetWateringTimer(String userId, String plantId) {
         DocumentReference docRef = getValidatedPlantReference(userId, plantId);
-        docRef.update("lastWatered", System.currentTimeMillis());
+        try {
+            DocumentSnapshot snapshot = docRef.get().get();
+            Map<String, Object> updates = new HashMap<>();
+            updates.put("lastWatered", System.currentTimeMillis());
+
+            if ("Thirsty".equalsIgnoreCase(snapshot.getString("healthStatus"))) {
+                updates.put("healthStatus", "Healthy");
+            }
+            docRef.update(updates).get();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Update failed");
+        }
     }
 
     public void updatePlantName(String userId, String plantId, String newName) {
