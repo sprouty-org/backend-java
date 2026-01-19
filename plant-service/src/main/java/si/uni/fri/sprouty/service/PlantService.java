@@ -18,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import si.uni.fri.sprouty.dto.GardenProfileResponse;
 import si.uni.fri.sprouty.dto.MasterPlant;
+import si.uni.fri.sprouty.dto.NotificationRequest;
 import si.uni.fri.sprouty.dto.UserPlant;
 
 import java.util.*;
@@ -141,6 +142,14 @@ public class PlantService {
                 updates.put("healthStatus", "Healthy");
             }
             docRef.update(updates).get();
+
+            NotificationRequest syncRequest = new NotificationRequest();
+            syncRequest.setUserId(userId);
+            try {
+                restTemplate.postForEntity("http://notification-service/notifications/send", syncRequest, String.class);
+            } catch (Exception e) {
+                logger.warn("Silent sync failed for user {}: {}", userId, e.getMessage());
+            }
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Update failed");
         }
