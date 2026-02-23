@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: user-service
-          image: europe-west4-docker.pkg.dev/sprouty-plantapp/sprouty-repo/user-service:latest
+          image: ghcr.io/DavidMuhicFRI/sprouty/user-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8081
@@ -76,7 +76,7 @@ spec:
     spec:
       containers:
         - name: plant-service
-          image: europe-west4-docker.pkg.dev/sprouty-plantapp/sprouty-repo/plant-service:latest
+          image: ghcr.io/DavidMuhicFRI/sprouty/plant-service:latest
           imagePullPolicy: Always
           ports: [{ containerPort: 8082 }]
           resources:
@@ -138,7 +138,7 @@ spec:
     spec:
       containers:
         - name: sensor-service
-          image: europe-west4-docker.pkg.dev/sprouty-plantapp/sprouty-repo/sensor-service:latest
+          image: ghcr.io/DavidMuhicFRI/sprouty/sensor-service:latest
           imagePullPolicy: Always
           ports: [{ containerPort: 8083 }]
           resources:
@@ -196,7 +196,7 @@ spec:
     spec:
       containers:
         - name: notification-service
-          image: europe-west4-docker.pkg.dev/sprouty-plantapp/sprouty-repo/notification-service:latest
+          image: ghcr.io/DavidMuhicFRI/sprouty/notification-service:latest
           imagePullPolicy: Always
           ports: [{ containerPort: 8084 }]
           resources:
@@ -253,7 +253,7 @@ spec:
     spec:
       containers:
         - name: gateway-service
-          image: europe-west4-docker.pkg.dev/sprouty-plantapp/sprouty-repo/gateway-service:latest
+          image: ghcr.io/DavidMuhicFRI/sprouty/gateway-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
