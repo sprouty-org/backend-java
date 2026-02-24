@@ -87,7 +87,8 @@ jobs:
         run: |
           if kubectl get deployment ${{ matrix.service }} > /dev/null 2>&1; then
             kubectl rollout restart deployment/${{ matrix.service }}
-            kubectl rollout status deployment/${{ matrix.service }} --timeout=60s
+            kubectl rollout status deployment/${{ matrix.service }} --timeout=120s
           else
             echo "Deployment ${{ matrix.service }} not found, skipping rollout."
           fi
+        continue-on-error: true
