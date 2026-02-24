@@ -80,8 +80,8 @@ jobs:
 
       - name: Apply manifests
         run: |
-          kubectl apply -f kubernetes/infrastructure.yaml --server-side
-          kubectl apply -f kubernetes/scaling.yaml --server-side
+          kubectl apply -f kubernetes/infrastructure.yaml --server-side --force-conflicts
+          kubectl apply -f kubernetes/scaling.yaml --server-side --force-conflicts
 
       - name: Restart deployment
         run: |
