@@ -29,6 +29,9 @@ jobs:
             notification-service: 'notification-service/**'
 
   build-and-deploy:
+    permissions:
+      contents: read
+      packages: write
     needs: changes
     if: ${{ needs.changes.outputs.services != '[]' }}
     runs-on: ubuntu-latest
