@@ -17,7 +17,7 @@ spec:
         - name: ghcr-io-key
       containers:
         - name: user-service
-          image: ghcr.io/davidmuhicfri/sprouty/user-service:latest
+          image: ghcr.io/davidmuhicfri/user-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8081
@@ -80,7 +80,7 @@ spec:
         - name: ghcr-io-key
       containers:
         - name: plant-service
-          image: ghcr.io/davidmuhicfri/sprouty/plant-service:latest
+          image: ghcr.io/davidmuhicfri/plant-service:latest
           imagePullPolicy: Always
           ports: [{ containerPort: 8082 }]
           resources:
@@ -144,7 +144,7 @@ spec:
         - name: ghcr-io-key
       containers:
         - name: sensor-service
-          image: ghcr.io/davidmuhicfri/sprouty/sensor-service:latest
+          image: ghcr.io/davidmuhicfri/sensor-service:latest
           imagePullPolicy: Always
           ports: [{ containerPort: 8083 }]
           resources:
@@ -204,7 +204,7 @@ spec:
         - name: ghcr-io-key
       containers:
         - name: notification-service
-          image: ghcr.io/davidmuhicfri/sprouty/notification-service:latest
+          image: ghcr.io/davidmuhicfri/notification-service:latest
           imagePullPolicy: Always
           ports: [{ containerPort: 8084 }]
           resources:
@@ -263,7 +263,7 @@ spec:
         - name: ghcr-io-key
       containers:
         - name: gateway-service
-          image: ghcr.io/davidmuhicfri/sprouty/gateway-service:latest
+          image: ghcr.io/davidmuhicfri/gateway-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
