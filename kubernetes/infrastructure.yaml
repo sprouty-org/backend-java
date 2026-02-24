@@ -13,6 +13,8 @@ spec:
       labels:
         app: user-service
     spec:
+      imagePullSecrets:
+        - name: ghcr-io-key
       containers:
         - name: user-service
           image: ghcr.io/davidmuhicfri/sprouty/user-service:latest
@@ -74,6 +76,8 @@ spec:
     metadata:
       labels: { app: plant-service }
     spec:
+      imagePullSecrets:
+        - name: ghcr-io-key
       containers:
         - name: plant-service
           image: ghcr.io/davidmuhicfri/sprouty/plant-service:latest
@@ -136,6 +140,8 @@ spec:
     metadata:
       labels: { app: sensor-service }
     spec:
+      imagePullSecrets:
+        - name: ghcr-io-key
       containers:
         - name: sensor-service
           image: ghcr.io/davidmuhicfri/sprouty/sensor-service:latest
@@ -194,6 +200,8 @@ spec:
     metadata:
       labels: { app: notification-service }
     spec:
+      imagePullSecrets:
+        - name: ghcr-io-key
       containers:
         - name: notification-service
           image: ghcr.io/davidmuhicfri/sprouty/notification-service:latest
@@ -251,6 +259,8 @@ spec:
     metadata:
       labels: { app: gateway-service }
     spec:
+      imagePullSecrets:
+        - name: ghcr-io-key
       containers:
         - name: gateway-service
           image: ghcr.io/davidmuhicfri/sprouty/gateway-service:latest
