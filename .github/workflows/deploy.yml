@@ -76,13 +76,18 @@ jobs:
         run: |
           mkdir -p ~/.kube
           echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
+          chmod 600 ~/.kube/config
 
       - name: Apply manifests
         run: |
-          kubectl apply -f kubernetes/infrastructure.yaml
-          kubectl apply -f kubernetes/scaling.yaml
+          kubectl apply -f kubernetes/infrastructure.yaml --server-side
+          kubectl apply -f kubernetes/scaling.yaml --server-side
 
       - name: Restart deployment
         run: |
-          kubectl rollout restart deployment/${{ matrix.service }}
-          kubectl rollout status deployment/${{ matrix.service }}
+          if kubectl get deployment ${{ matrix.service }} > /dev/null 2>&1; then
+            kubectl rollout restart deployment/${{ matrix.service }}
+            kubectl rollout status deployment/${{ matrix.service }} --timeout=60s
+          else
+            echo "Deployment ${{ matrix.service }} not found, skipping rollout."
+          fi
